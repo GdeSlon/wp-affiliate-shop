@@ -45,9 +45,30 @@ while ($file = readdir($dh)) {
 }
 closedir($dh);
 
-$content = file_get_contents($path.'/'.$xmlfile);
+global $bufer;
+$bufer = '';
 
-// Обработка категорий
+function loadFilePart($f, $delimiter) {
+	global $bufer;
+	$res = '';
+	while ($row = fgets($f)) {
+		if (($p = mb_strpos($row, $delimiter, 0, 'utf-8')) !== false) {
+			$res .= mb_substr($row, 0, $p + mb_strlen($delimiter, 'utf-8'), 'utf-8');
+			$newBufer = mb_substr($row, $p + mb_strlen($delimiter, 'utf-8'), mb_strlen($row, 'utf-8'), 'utf-8');
+			break;
+		} else {
+			$res .= $row;
+		}
+	}
+	$res = $bufer.$res;
+	$bufer = @$newBufer;
+	return $res;
+}
+
+$f = fopen($path.'/'.$xmlfile, 'r');
+
+/* Обработка категорий */
+$content = loadFilePart($f, '</categories>');
 $ps = mb_strpos($content, '<categories>', 0, 'utf-8');
 $pe = mb_strpos($content, '</categories>', 0, 'utf-8');
 if ($ps && $pe) {
@@ -94,9 +115,10 @@ if ($ps && $pe) {
 	}
 }
 
-// Обработка товаров
+/* Обработка товаров */
 $wpdb->query("UPDATE ps_products SET marked = 0 WHERE status <> 2");
 while (true) {
+	$content = loadFilePart($f, '</offer>');
 	$psp = mb_strpos($content, '<offer ', 0, 'utf-8');
 	$pep = mb_strpos($content, '</offer>', 0, 'utf-8');
 	if ($psp !== false && $pep !== false) {
@@ -162,10 +184,12 @@ while (true) {
 				marked = 1, status = 1");
 		}
 		
-		$content = mb_substr($content, $pep + mb_strlen('</offer>', 'utf-8'), mb_strlen($content, 'utf-8'), 'utf-8');
+		unset($content);
 	} else { break; }
 }
 $wpdb->query("UPDATE ps_products SET status = 0 WHERE marked = 0");
+
+fclose($f);
 
 wp_mail(get_option('admin_email'), 'Обновление товаров', 'Обновление товаров завершено!');
 
