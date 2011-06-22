@@ -102,7 +102,7 @@ function psCatalogPage() {
 	    <tr valign="top">
 	    	<th scope="row"><label for="ps_cat">Раздел</label></th>
 	    	<td>
-	    		<?php $cats = getCategoriesTreeList(); ?>
+	    		<?php $cats = getCategoriesTreeList(null, 0, array()); ?>
 	    		<select name="ps_cat"  id="ps_cat" style="width: 550px;">
 	    			<option value=""></option>
 	    			<?php foreach ($cats as $id => $val) { ?>

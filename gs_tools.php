@@ -1,6 +1,6 @@
 <?php
 
-function getCategoriesTreeList($parentId = null, $level = 0, &$res = array()) {
+function getCategoriesTreeList($parentId, $level, &$res) {
 	global $wpdb;
 	if (!empty($parentId))
 		$where = 'parent_id = '.$parentId;
