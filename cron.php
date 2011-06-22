@@ -4,6 +4,7 @@ set_time_limit(36000);
 define('DOING_CRON', true);
 
 require_once(dirname(__FILE__) . '/../../../wp-load.php');
+require_once(dirname(__FILE__).'/unzip.lib.php');
 
 $accessCode = get_option('ps_access_code');
 if (empty($_GET['code'])) {
@@ -44,6 +45,24 @@ while ($file = readdir($dh)) {
 	}
 }
 closedir($dh);
+
+if (empty($xmlfile)) {
+	// Распаковка средствами PHP
+	$unzip = new SimpleUnzip($path.'/archive.zip');
+	//print_r($unzip); exit;
+	if ($unzip->Count() != 0 && $unzip->GetError(0) == 0) {
+		$content = $unzip->GetData(0);
+		$f = fopen($path.'/archive.xml', 'w');
+		fwrite($f, $content);
+		fclose($f);
+		unset($content);
+		$xmlfile = 'archive.xml';
+	}
+}
+if (empty($xmlfile)) {
+	echo 'На сервере не установлена утилита unzip.';
+	exit;
+}
 
 global $bufer;
 $bufer = '';
