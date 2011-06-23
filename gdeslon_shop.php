@@ -61,9 +61,12 @@ function psOptionsPage() {
     </p>
     </form>
     <div style="border: 1px solid #aaa; padding: 7px;">
+    	<?php
+    		$dirname = basename(dirname(__FILE__));
+    	?>
     	Необходимо в крон добавить один из вариантов запуска модуля импорта:<br /><br />
-    	<b>php <?php echo ABSPATH; ?>wp-content/plugins/GdeSlon_Affiliate_Shop/cron.php</b><br /><br />
-    	<b>GET <?php bloginfo('home'); ?>/wp-content/plugins/GdeSlon_Affiliate_Shop/cron.php?code=<?php echo get_option('ps_access_code'); ?></b><br />
+    	<b>php <?php echo ABSPATH; ?>wp-content/plugins/<?php echo $dirname; ?>/cron.php</b><br /><br />
+    	<b>GET <?php bloginfo('home'); ?>/wp-content/plugins/<?php echo $dirname; ?>/cron.php?code=<?php echo get_option('ps_access_code'); ?></b><br />
     	<br />
     	<form method="get" action="<?php bloginfo('home'); ?>/wp-content/plugins/GdeSlon_Affiliate_Shop/cron.php" target="_blank">
     		<input type="hidden" name="code" value="<?php echo get_option('ps_access_code'); ?>" />
@@ -102,7 +105,8 @@ function psCatalogPage() {
 	    <tr valign="top">
 	    	<th scope="row"><label for="ps_cat">Раздел</label></th>
 	    	<td>
-	    		<?php $cats = getCategoriesTreeList(null, 0, array()); ?>
+	    		<?php $tmp = array(); ?>
+	    		<?php $cats = getCategoriesTreeList(null, 0, $tmp); ?>
 	    		<select name="ps_cat"  id="ps_cat" style="width: 550px;">
 	    			<option value=""></option>
 	    			<?php foreach ($cats as $id => $val) { ?>
