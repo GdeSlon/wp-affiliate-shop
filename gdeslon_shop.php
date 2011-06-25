@@ -68,7 +68,7 @@ function psOptionsPage() {
     	<b>php <?php echo ABSPATH; ?>wp-content/plugins/<?php echo $dirname; ?>/cron.php</b><br /><br />
     	<b>GET <?php bloginfo('home'); ?>/wp-content/plugins/<?php echo $dirname; ?>/cron.php?code=<?php echo get_option('ps_access_code'); ?></b><br />
     	<br />
-    	<form method="get" action="<?php bloginfo('home'); ?>/wp-content/plugins/GdeSlon_Affiliate_Shop/cron.php" target="_blank">
+    	<form method="get" action="<?php bloginfo('home'); ?>/wp-content/plugins/<?php echo $dirname; ?>/cron.php" target="_blank">
     		<input type="hidden" name="code" value="<?php echo get_option('ps_access_code'); ?>" />
     		<input type="submit" class="button-primary" value="Запустить импорт" />
     	</form>
