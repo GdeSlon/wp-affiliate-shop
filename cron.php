@@ -107,6 +107,8 @@ if ($ps && $pe) {
 			
 			$ps = mb_strpos($category, '>', 0, 'utf-8');
 			$title = mb_substr($category, $ps + 1, mb_strlen($category, 'utf-8'), 'utf-8');
+            $title = str_replace('<![CDATA[', '', $title);
+            $title = str_replace(']]>', '', $title);
 			
 			$cat = array(
 				'id' => $id,
@@ -162,10 +164,14 @@ while (true) {
 		
 		preg_match('|\<name\>(.+)\</name\>|', $product, $matches);
 		$title = @$matches[1];
+        $title = str_replace('<![CDATA[', '', $title);
+        $title = str_replace(']]>', '', $title);
 		
 		$ps = mb_strpos($product, '<description>', 0, 'utf-8');
 		$pe = mb_strpos($product, '</description>', 0, 'utf-8');
 		$descr = mb_substr($product, $ps + mb_strlen('<description>', 'utf-8'), $pe - $ps - mb_strlen('<description>', 'utf-8'), 'utf-8');
+        $descr = str_replace('<![CDATA[', '', $descr);
+        $descr = str_replace(']]>', '', $descr);
 		
 		preg_match('|\<category_id\>(.+)\</category_id\>|', $product, $matches);
 		$categoryId = @$matches[1];
