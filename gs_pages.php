@@ -215,13 +215,13 @@ function psCatalog($content) {
 			$tops = array_reverse($tops);
 			foreach ($tops as $catId) {
 				$catName =  $wpdb->get_var("SELECT title FROM ps_categories WHERE id = {$catId}");
-				$item = '<a href="'.get_permalink(get_option('ps_page')).'?cat='.$catId.'">'.$catName.'</a>';
-        $br[] = preg_match('/(:?\?.+?)\?/', $item);
+				$item = get_permalink(get_option('ps_page')).'?cat='.$catId;
+        $br[] = '<a href="'.preg_replace('/(:?\?.+?)\?/', '$1&', $item).'">'.$catName.'</a>';
 			}
 			if (!empty($_GET['pid'])) {
 				$prodName =  $wpdb->get_var("SELECT title FROM ps_products WHERE id = {$_GET['pid']}");
-				$item = '<a href="'.get_permalink(get_option('ps_page')).'?pid='.$_GET['pid'].'">'.$prodName.'</a>';
-        $br[] = preg_match('/(:?\?.+?)\?/', $item);
+				$item = get_permalink(get_option('ps_page')).'?pid='.$_GET['pid'];
+        $br[] = '<a href="'.preg_replace('/(:?\?.+?)\?/', '$1&', $item).'">'.$catName.'</a>';
 			}
     	}
     	echo implode(' &gt; ', $br);
