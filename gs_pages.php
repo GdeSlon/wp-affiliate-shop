@@ -216,12 +216,12 @@ function psCatalog($content) {
 			foreach ($tops as $catId) {
 				$catName =  $wpdb->get_var("SELECT title FROM ps_categories WHERE id = {$catId}");
 				$item = '<a href="'.get_permalink(get_option('ps_page')).'?cat='.$catId.'">'.$catName.'</a>';
-        $br[] = preg_match('/(:?\?.+?)\?/', $item)
+        $br[] = preg_match('/(:?\?.+?)\?/', $item);
 			}
 			if (!empty($_GET['pid'])) {
 				$prodName =  $wpdb->get_var("SELECT title FROM ps_products WHERE id = {$_GET['pid']}");
 				$item = '<a href="'.get_permalink(get_option('ps_page')).'?pid='.$_GET['pid'].'">'.$prodName.'</a>';
-        $br[] = preg_match('/(:?\?.+?)\?/', $item)
+        $br[] = preg_match('/(:?\?.+?)\?/', $item);
 			}
     	}
     	echo implode(' &gt; ', $br);
