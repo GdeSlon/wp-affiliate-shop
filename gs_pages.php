@@ -161,7 +161,7 @@ function psProductPage() {
 					<div class="products-image"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php echo $item->image; ?>" style="width: 100px; height: 100px;" /></a></div>
 					<p class="products-name"><?php echo $item->title; ?></p>
 					<p class="products-price"><?php echo $item->price; ?> <?php echo ($item->currency == 'RUR' ? 'руб.' : $item->currency); ?></p>
-					<p class="products-details"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php bloginfo('home'); ?>/wp-content/plugins/GdeSlon_Affiliate_Shop/img/details.png" alt="Подробнее" /></a></p>
+					<p class="products-details"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php bloginfo('home'); ?>/wp-content/plugins/<?php echo basename(dirname(__FILE__)); ?>/img/details.png" alt="Подробнее" /></a></p>
 				</td>
 			<?php } ?>
 		</tr>
@@ -179,7 +179,7 @@ function psProductPage() {
 					<div class="products-image"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php echo $item->image; ?>" style="width: 100px; height: 100px;" /></a></div>
 					<p class="products-name"><?php echo $item->title; ?></p>
 					<p class="products-price"><?php echo $item->price; ?> <?php echo ($item->currency == 'RUR' ? 'руб.' : $item->currency); ?></p>
-					<p class="products-details"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php bloginfo('home'); ?>/wp-content/plugins/GdeSlon_Affiliate_Shop/img/details.png" alt="Подробнее" /></a></p>
+					<p class="products-details"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php bloginfo('home'); ?>/wp-content/plugins/<?php echo basename(dirname(__FILE__)); ?>/img/details.png" alt="Подробнее" /></a></p>
 				</td>
 			<?php } ?>
 		</tr>
