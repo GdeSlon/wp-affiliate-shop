@@ -1,15 +1,19 @@
 <?php
+header('Content-type: text/html; charset=utf-8');
 ignore_user_abort(true);
 set_time_limit(36000);
 define('DOING_CRON', true);
 
 require_once(dirname(__FILE__) . '/../../../wp-load.php');
-require_once(dirname(__FILE__).'/unzip.lib.php');
+require_once(dirname(__FILE__) . '/../../../wp-admin/includes/class-pclzip.php');
 
 $accessCode = get_option('ps_access_code');
+$getEnable = (int)get_option('ps_get_enable');
+
 if (empty($_GET['code'])) {
 	if (!empty($_SERVER['REQUEST_URI'])) exit;
 } else {
+    if(!$getEnable) die('Возможность обновления базы GET-запросом выключена');
 	if ($accessCode != $_GET['code']) exit;
 }
 
@@ -30,11 +34,11 @@ $f = fopen($path.'/archive.zip', 'w');
 fwrite($f, $file);
 fclose($f);
 
-/* Распаковка архива */
-$filename = escapeshellarg($path.'/archive.zip');
-$destination_folder = escapeshellarg($path);
 
-shell_exec("unzip -ou $filename -d $destination_folder");
+/* Распаковка архива */
+
+$zip = new PclZip($path.'/archive.zip');
+$zip->extract(PCLZIP_OPT_PATH, $path);
 
 $xmlfile = '';
 $dh = opendir($path);
@@ -46,21 +50,9 @@ while ($file = readdir($dh)) {
 }
 closedir($dh);
 
+
 if (empty($xmlfile)) {
-	// Распаковка средствами PHP
-	$unzip = new SimpleUnzip($path.'/archive.zip');
-	//print_r($unzip); exit;
-	if ($unzip->Count() != 0 && $unzip->GetError(0) == 0) {
-		$content = $unzip->GetData(0);
-		$f = fopen($path.'/archive.xml', 'w');
-		fwrite($f, $content);
-		fclose($f);
-		unset($content);
-		$xmlfile = 'archive.xml';
-	}
-}
-if (empty($xmlfile)) {
-	echo 'На сервере не установлена утилита unzip.';
+	echo 'Не удалось получить выгрузку.';
 	exit;
 }
 
@@ -218,6 +210,6 @@ fclose($f);
 
 wp_mail(get_option('admin_email'), 'Обновление товаров', 'Обновление товаров завершено!');
 
-echo 'Done!';
+echo "Done!\n";
 exit;
 ?>

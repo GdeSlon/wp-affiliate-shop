@@ -14,8 +14,13 @@ add_action("wp_head", "psStyles", 100);
 // *****************************************************************************************************
 
 function psOptionsPage() {
-    if ($_POST['action'] == 'update') {
+    if (isset($_POST['action'])&&($_POST['action'] == 'update')) {
         $url = $_POST['ps_url'];
+        if (isset($_POST['ps_get_enable']))
+            update_option('ps_get_enable', '1');
+        else
+            update_option('ps_get_enable', '0');
+
         update_option('ps_url', $url);
         update_option('ps_page', $_POST['ps_page']);
         update_option('ps_limit', $_POST['ps_limit']);
@@ -25,6 +30,7 @@ function psOptionsPage() {
     <?php
     }
     $url = get_option('ps_url');
+    $get_enable = (int)get_option('ps_get_enable');
     $ps_page = get_option('ps_page');
     ?>
     <div class="wrap">
@@ -55,6 +61,10 @@ function psOptionsPage() {
 	    	<th scope="row"><label for="ps_row_limit">Кол-во товаров в строке</label></th>
 	    	<td><input name="ps_row_limit" type="text" value="<?php echo get_option('ps_row_limit'); ?>" class="regular-text" style="width: 100px;" /></td>
 	    </tr>
+        <tr valign="top">
+	    	<th scope="row"><label for="ps_get_enable">Обновлять по GET-запросу</label></th>
+	    	<td><input name="ps_get_enable" type="checkbox" <?php if($get_enable) echo "checked='yes'"; ?> value="enable" /></td>
+	    </tr>
     </table>
     <p class="submit">
     	<input type="submit" name="Submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
@@ -66,9 +76,9 @@ function psOptionsPage() {
     	?>
     	Необходимо в крон добавить один из вариантов запуска модуля импорта:<br /><br />
     	<b>php <?php echo ABSPATH; ?>wp-content/plugins/<?php echo $dirname; ?>/cron.php</b><br /><br />
-    	<b>GET <?php bloginfo('home'); ?>/wp-content/plugins/<?php echo $dirname; ?>/cron.php?code=<?php echo get_option('ps_access_code'); ?></b><br />
+    	<b>GET <?php bloginfo('url'); ?>/wp-content/plugins/<?php echo $dirname; ?>/cron.php?code=<?php echo get_option('ps_access_code'); ?></b><br />
     	<br />
-    	<form method="get" action="<?php bloginfo('home'); ?>/wp-content/plugins/<?php echo $dirname; ?>/cron.php" target="_blank">
+    	<form method="get" action="<?php bloginfo('url'); ?>/wp-content/plugins/<?php echo $dirname; ?>/cron.php" target="_blank">
     		<input type="hidden" name="code" value="<?php echo get_option('ps_access_code'); ?>" />
     		<input type="submit" class="button-primary" value="Запустить импорт" />
     	</form>
@@ -84,7 +94,7 @@ function psOptionsPage() {
 
 function psCatalogPage() {
 	global $wpdb;
-    if( $_POST['action'] == 'update') {
+    if( isset($_POST['action'])&&($_POST['action'] == 'update')) {
 	    ?>
 	    <div class="updated"><p><strong>Данные сохранены</strong></p></div>
 	    <?php
@@ -177,7 +187,7 @@ function psCatalogPage() {
 		    		<tr>
 		    			<td style="text-align: center;"><input type="checkbox" name="bs[]" value="<?php echo $item->id; ?>" <?php if (!empty($item->bestseller)) echo 'checked="checked"'; ?> /></td>
 		    			<td style="padding: 2px;"><?php echo $item->id; ?></td>
-		    			<td><a href="<?php echo get_permalink(get_option('ps_page')); ?>?pid=<?php echo $item->id; ?>" target="_blank"><?php echo $item->title; ?></a></td>
+		    			<td><a href="<?php echo get_permalink(get_option('ps_page')); ?>&pid=<?php echo $item->id; ?>" target="_blank"><?php echo $item->title; ?></a></td>
 		    			<td style="text-align: right;"><?php echo $item->price; ?>&nbsp;<?php echo $item->currency; ?></td>
 		    			<td style="text-align: center;"><?php echo $statuses[$item->status]; ?></td>
 		    			<td><a href="#" onclick="
@@ -226,14 +236,15 @@ function psCatalogPage() {
 add_action("admin_menu", "psAdminPage");
 
 function psAdminPage() {
-	add_menu_page('GdeSlon Shop', 'GdeSlon Shop', 8, __FILE__, 'psOptionsPage');
-	add_submenu_page(__FILE__, 'Настройки', 'Настройки', 8, __FILE__, 'psOptionsPage');
-	add_submenu_page(__FILE__, 'Каталог', 'Каталог', 8, 'psCatalogPage', 'psCatalogPage');
+	add_menu_page('GdeSlon Shop', 'GdeSlon Shop', 'edit_pages', __FILE__, 'psOptionsPage');
+	add_submenu_page(__FILE__, 'Настройки', 'Настройки', 'edit_pages', __FILE__, 'psOptionsPage');
+	add_submenu_page(__FILE__, 'Каталог', 'Каталог', 'edit_pages', 'psCatalogPage', 'psCatalogPage');
 }
 
 function psActivate() {
 	global $wpdb;
     update_option('ps_url', '');
+    update_option('ps_get_enable',1);
     update_option('ps_access_code', md5(rand(1, 10000).rand(1, 1000).time()));
     $wpdb->query("
 		CREATE TABLE `ps_categories` (
@@ -276,6 +287,7 @@ function psActivate() {
 
 function psDeactivate() {
 	global $wpdb;
+    delete_option('ps_get_enable');
     delete_option('ps_url');
     delete_option('ps_access_code');
     $wpdb->query("DROP TABLE `ps_products`;");
