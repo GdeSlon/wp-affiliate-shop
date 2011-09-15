@@ -2,7 +2,7 @@
 /*
 Plugin Name: GdeSlon Affiliate Shop
 Version: 1.0
-Author: Sergey Yalanskiy
+Author: GdeSlon
 */
 require('gs_tools.php');
 require('gs_pages.php');
