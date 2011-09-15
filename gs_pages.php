@@ -13,13 +13,11 @@ function showCategoryLevel($tops, $parentId = null) {
 
 	echo '<ul>';
 	foreach ($cats as $item) {
-        $title = str_replace('<![CDATA[', '', $item->title);
-        $title = str_replace(']]>', '', $title);
 		if (in_array($item->id, $tops)) {
-			echo '<li>'.$title.'</li>';
+			echo '<li>'.$item->title.'</li>';
 			showCategoryLevel($tops, $item->id);
 		} else {
-			echo '<li><a href="'.fixUrl(get_permalink(get_option('ps_page')).'?cat='.$item->id).'">'.$title.'</a></li>';
+			echo '<li><a href="'.fixUrl(get_permalink(get_option('ps_page')).'?cat='.$item->id).'">'.$item->title.'</a></li>';
 		}
 	}
 	echo '</ul>';

@@ -20,6 +20,23 @@ if (empty($_GET['code'])) {
 $base = dirname(__FILE__);
 $path = $base.'/downloads';
 
+
+set_error_handler(
+    create_function(
+        '$severity, $message, $file, $line',
+        'throw new ErrorException($message, $severity, $severity, $file, $line);'
+    )
+);
+
+try{
+    file_put_contents ($path.'/test.txt', 'Hello File');
+    @unlink($path.'/test.txt');
+}catch (ErrorException $e ){
+    die("Не хватает прав на запись в каталог $path . Выставьте нужные права и попробуйте еще раз.");
+}
+
+restore_error_handler();
+
 $url = get_option('ps_url');
 
 
