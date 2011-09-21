@@ -132,7 +132,7 @@ function psProductPage() {
 				<td style="vertical-align: top;">
 					<img src="<?php echo $product->image; ?>" style="width: 250px;" />
 					<p class="products-price"><?php echo $product->price; ?> <?php echo ($product->currency == 'RUR' ? 'руб.' : $product->currency); ?></p>
-					<p><a href="<?php echo $product->url; ?>" target="_blank">
+					<p><a href="<?php echo bloginfo('url').'/wp-content/plugins/'.basename(dirname(__FILE__)).'/go.php?url='.$product->url; ?>" target="_blank">
 						<img src="<?php bloginfo('url'); ?>/wp-content/plugins/<?php echo basename(dirname(__FILE__)); ?>/img/buy.png" alt="Купить <?php echo $product->title; ?>" />
 					</a></p>
 				</td>
