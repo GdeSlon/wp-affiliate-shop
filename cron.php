@@ -157,7 +157,7 @@ while (true) {
 		$matches = array();
 		
 		preg_match('/ id="(\d+)"/', $product, $matches);
-		$id = $matches[1];
+		$id = @$matches[1];
 		
 		preg_match('|\<url\>(.+)\</url\>|', $product, $matches);
 		$url = @$matches[1];
@@ -187,7 +187,7 @@ while (true) {
 		
 		$title = mysql_real_escape_string($title);
 		$descr = mysql_real_escape_string($descr);
-		$res = $wpdb->get_row("SELECT * FROM ps_products WHERE id = {$id}");
+		$res = $wpdb->get_row("SELECT * FROM ps_products WHERE id = '{$id}'");
 		if (!empty($res)) {
 			if ($res->status != 2) {
 				if (!empty($res->manual)) {
@@ -203,11 +203,11 @@ while (true) {
 					image = '{$image}',
 					category_id = '{$categoryId}',
 					marked = 1, status = 1
-					WHERE id = {$id}");
+					WHERE id = '{$id}'");
 			}
 		} else {
 			$wpdb->query("INSERT INTO ps_products SET
-				id = {$id},
+				id = '{$id}',
 				title = '{$title}',
 				description = '{$descr}',
 				url = '{$url}',
