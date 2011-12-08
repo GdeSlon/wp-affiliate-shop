@@ -114,7 +114,7 @@ if ($ps && $pe) {
 				'id' => $id,
 				'title' => $title
 			);
-			if (preg_match('/parent_id="(\d+)"/', $category, $matches)) {
+			if (preg_match('/parentId="(\d+)"/', $category, $matches)) {
 				$parentId = $matches[1];
 				$cat['parent_id'] = $parentId;
 			}
@@ -173,7 +173,7 @@ while (true) {
         $descr = str_replace('<![CDATA[', '', $descr);
         $descr = str_replace(']]>', '', $descr);
 		
-		preg_match('|\<category_id\>(.+)\</category_id\>|', $product, $matches);
+		preg_match('|\<categoryId\>(.+)\</categoryId\>|', $product, $matches);
 		$categoryId = @$matches[1];
 		
 		$title = mysql_real_escape_string($title);
