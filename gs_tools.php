@@ -30,10 +30,11 @@ function getCategoriesChildren($id) {
 
 function makeLink($page = 1) {
 	$res = get_permalink(get_option('ps_page'));
+	$delimiter=(strpos($res,'?')===false)?'?':'&';
 	$params = array('page='.$page);
 	if (!empty($_GET['cat'])) $params[] = 'cat='.$_GET['cat'];
 	if (!empty($_GET['ps_search'])) $params[] = 'ps_search='.$_GET['ps_search'];
-	return $res.'?'.implode('&',$params);
+	return $res.$delimiter.implode('&',$params);
 }
 
 ?>

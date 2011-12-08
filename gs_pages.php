@@ -13,13 +13,11 @@ function showCategoryLevel($tops, $parentId = null) {
 
 	echo '<ul>';
 	foreach ($cats as $item) {
-        $title = str_replace('<![CDATA[', '', $item->title);
-        $title = str_replace(']]>', '', $title);
 		if (in_array($item->id, $tops)) {
-			echo '<li>'.$title.'</li>';
+			echo '<li>'.$item->title.'</li>';
 			showCategoryLevel($tops, $item->id);
 		} else {
-			echo '<li><a href="'.fixUrl(get_permalink(get_option('ps_page')).'?cat='.$item->id).'">'.$title.'</a></li>';
+			echo '<li><a href="'.fixUrl(get_permalink(get_option('ps_page')).'?cat='.$item->id).'">'.$item->title.'</a></li>';
 		}
 	}
 	echo '</ul>';
@@ -90,7 +88,7 @@ function psMainPage() {
 						<div class="products-image"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php echo $item->image; ?>" style="width: 100px; height: 100px;" /></a></div>
 						<p class="products-name"><?php echo $item->title; ?></p>
 						<p class="products-price"><?php echo $item->price; ?> <?php echo ($item->currency == 'RUR' ? 'руб.' : $item->currency); ?></p>
-						<p class="products-details"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php bloginfo('home'); ?>/wp-content/plugins/<?php echo basename(dirname(__FILE__)); ?>/img/details.png" alt="Подробнее" /></a></p>
+						<p class="products-details"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php bloginfo('url'); ?>/wp-content/plugins/<?php echo basename(dirname(__FILE__)); ?>/img/details.png" alt="Подробнее" /></a></p>
 					</td>
 					<?php
 						$cnt++;
@@ -134,8 +132,8 @@ function psProductPage() {
 				<td style="vertical-align: top;">
 					<img src="<?php echo $product->image; ?>" style="width: 250px;" />
 					<p class="products-price"><?php echo $product->price; ?> <?php echo ($product->currency == 'RUR' ? 'руб.' : $product->currency); ?></p>
-					<p><a href="<?php echo $product->url; ?>" target="_blank">
-						<img src="<?php bloginfo('home'); ?>/wp-content/plugins/<?php echo basename(dirname(__FILE__)); ?>/img/buy.png" alt="Купить <?php echo $product->title; ?>" />
+					<p><a href="<?php echo bloginfo('url').'/wp-content/plugins/'.basename(dirname(__FILE__)).'/go.php?url='.$product->url; ?>" target="_blank">
+						<img src="<?php bloginfo('url'); ?>/wp-content/plugins/<?php echo basename(dirname(__FILE__)); ?>/img/buy.png" alt="Купить <?php echo $product->title; ?>" />
 					</a></p>
 				</td>
 				<td>&nbsp;</td>
@@ -161,7 +159,7 @@ function psProductPage() {
 					<div class="products-image"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php echo $item->image; ?>" style="width: 100px; height: 100px;" /></a></div>
 					<p class="products-name"><?php echo $item->title; ?></p>
 					<p class="products-price"><?php echo $item->price; ?> <?php echo ($item->currency == 'RUR' ? 'руб.' : $item->currency); ?></p>
-					<p class="products-details"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php bloginfo('home'); ?>/wp-content/plugins/<?php echo basename(dirname(__FILE__)); ?>/img/details.png" alt="Подробнее" /></a></p>
+					<p class="products-details"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php bloginfo('url'); ?>/wp-content/plugins/<?php echo basename(dirname(__FILE__)); ?>/img/details.png" alt="Подробнее" /></a></p>
 				</td>
 			<?php } ?>
 		</tr>
@@ -179,7 +177,7 @@ function psProductPage() {
 					<div class="products-image"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php echo $item->image; ?>" style="width: 100px; height: 100px;" /></a></div>
 					<p class="products-name"><?php echo $item->title; ?></p>
 					<p class="products-price"><?php echo $item->price; ?> <?php echo ($item->currency == 'RUR' ? 'руб.' : $item->currency); ?></p>
-					<p class="products-details"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php bloginfo('home'); ?>/wp-content/plugins/<?php echo basename(dirname(__FILE__)); ?>/img/details.png" alt="Подробнее" /></a></p>
+					<p class="products-details"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php bloginfo('url'); ?>/wp-content/plugins/<?php echo basename(dirname(__FILE__)); ?>/img/details.png" alt="Подробнее" /></a></p>
 				</td>
 			<?php } ?>
 		</tr>

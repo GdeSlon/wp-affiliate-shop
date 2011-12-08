@@ -1,20 +1,41 @@
 <?php
+header('Content-type: text/html; charset=utf-8');
 ignore_user_abort(true);
 set_time_limit(36000);
 define('DOING_CRON', true);
 
 require_once(dirname(__FILE__) . '/../../../wp-load.php');
-require_once(dirname(__FILE__).'/unzip.lib.php');
+require_once(dirname(__FILE__) . '/../../../wp-admin/includes/class-pclzip.php');
 
 $accessCode = get_option('ps_access_code');
+$getEnable = (int)get_option('ps_get_enable');
+
 if (empty($_GET['code'])) {
 	if (!empty($_SERVER['REQUEST_URI'])) exit;
 } else {
+    if(!$getEnable) die('Возможность обновления базы GET-запросом выключена');
 	if ($accessCode != $_GET['code']) exit;
 }
 
 $base = dirname(__FILE__);
 $path = $base.'/downloads';
+
+
+set_error_handler(
+    create_function(
+        '$severity, $message, $file, $line',
+        'throw new ErrorException($message, $severity, $severity, $file, $line);'
+    )
+);
+
+try{
+    file_put_contents ($path.'/test.txt', 'Hello File');
+    @unlink($path.'/test.txt');
+}catch (ErrorException $e ){
+    die("Не хватает прав на запись в каталог $path . Выставьте нужные права и попробуйте еще раз.");
+}
+
+restore_error_handler();
 
 $url = get_option('ps_url');
 
@@ -30,11 +51,11 @@ $f = fopen($path.'/archive.zip', 'w');
 fwrite($f, $file);
 fclose($f);
 
-/* Распаковка архива */
-$filename = escapeshellarg($path.'/archive.zip');
-$destination_folder = escapeshellarg($path);
 
-shell_exec("unzip -ou $filename -d $destination_folder");
+/* Распаковка архива */
+
+$zip = new PclZip($path.'/archive.zip');
+$zip->extract(PCLZIP_OPT_PATH, $path);
 
 $xmlfile = '';
 $dh = opendir($path);
@@ -46,21 +67,9 @@ while ($file = readdir($dh)) {
 }
 closedir($dh);
 
+
 if (empty($xmlfile)) {
-	// Распаковка средствами PHP
-	$unzip = new SimpleUnzip($path.'/archive.zip');
-	//print_r($unzip); exit;
-	if ($unzip->Count() != 0 && $unzip->GetError(0) == 0) {
-		$content = $unzip->GetData(0);
-		$f = fopen($path.'/archive.xml', 'w');
-		fwrite($f, $content);
-		fclose($f);
-		unset($content);
-		$xmlfile = 'archive.xml';
-	}
-}
-if (empty($xmlfile)) {
-	echo 'На сервере не установлена утилита unzip.';
+	echo 'Не удалось получить выгрузку.';
 	exit;
 }
 
@@ -148,7 +157,7 @@ while (true) {
 		$matches = array();
 		
 		preg_match('/ id="(\d+)"/', $product, $matches);
-		$id = $matches[1];
+		$id = @$matches[1];
 		
 		preg_match('|\<url\>(.+)\</url\>|', $product, $matches);
 		$url = @$matches[1];
@@ -178,7 +187,7 @@ while (true) {
 		
 		$title = mysql_real_escape_string($title);
 		$descr = mysql_real_escape_string($descr);
-		$res = $wpdb->get_row("SELECT * FROM ps_products WHERE id = {$id}");
+		$res = $wpdb->get_row("SELECT * FROM ps_products WHERE id = '{$id}'");
 		if (!empty($res)) {
 			if ($res->status != 2) {
 				if (!empty($res->manual)) {
@@ -194,11 +203,11 @@ while (true) {
 					image = '{$image}',
 					category_id = '{$categoryId}',
 					marked = 1, status = 1
-					WHERE id = {$id}");
+					WHERE id = '{$id}'");
 			}
 		} else {
 			$wpdb->query("INSERT INTO ps_products SET
-				id = {$id},
+				id = '{$id}',
 				title = '{$title}',
 				description = '{$descr}',
 				url = '{$url}',
@@ -218,6 +227,6 @@ fclose($f);
 
 wp_mail(get_option('admin_email'), 'Обновление товаров', 'Обновление товаров завершено!');
 
-echo 'Done!';
+echo "Done!\n";
 exit;
 ?>
