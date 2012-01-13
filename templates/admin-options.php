@@ -7,6 +7,7 @@
 <?php if ($isError):?>
 <div class="updated"><p><strong>Ошибка</strong></p></div>
 <?php endif?>
+
 <div class="wrap">
 	<h2>GdeSlon Affiliate Shop - Настройки</h2>
 	<form name="form1" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
@@ -49,16 +50,29 @@
 		</p>
 	</form>
 	<h3>Импорт</h3>
+	<?php if (GdeSlonImport::checkCurl() || GdeSlonImport::checkFileGetContentsCurl()):?>
 	<div style="border: 1px solid #aaa; padding: 7px;">
 		Необходимо в крон добавить один из вариантов запуска модуля импорта:<br /><br />
 		<b>php <?php echo ABSPATH; ?>wp-content/plugins/<?php echo $dirname; ?>/cron.php</b><br /><br />
 		<b>GET <?php bloginfo('url'); ?>/wp-content/plugins/<?php echo $dirname; ?>/cron.php?code=<?php echo get_option('ps_access_code'); ?></b><br />
 		<br />
+		<p>Для выкачивания файла будет использован <strong><?php echo GdeSlonImport::checkCurl() ? 'cUrl' : 'file_get_contents'?></strong></p>
 		<form method="get" action="<?php bloginfo('url'); ?>/wp-content/plugins/<?php echo $dirname; ?>/cron.php" target="_blank">
 			<input type="hidden" name="code" value="<?php echo get_option('ps_access_code'); ?>" />
 			<input type="submit" class="button-primary" value="Запустить импорт" />
 		</form>
 	</div>
+	<?php else:?>
+	<p style="color:red">
+		Внимание! Невозможно импортировать файл.
+		Что решить эту проблему вам необходимо предпринять одно из следующих действий:
+		<ul>
+		<li>— Либо установить на сервере расширение для php <a href="http://www.php.net/manual/ru/book.curl.php" target="_blank">cUrl</a></li>
+		<li>— Либо Включить в php.ini <a href="http://www.php.net/manual/en/filesystem.configuration.php#ini.allow-url-fopen" target="_blank">allow_url_fopen</a></li>
+		</ul>
+	</p>
+	<?php endif?>
+
 	<?php if (calcCategories()+calcProducts() > 0):?>
 	<h3>Удаление данных</h3>
 	<p style="color:red">Внимание! Посты удалены не будут!</p>

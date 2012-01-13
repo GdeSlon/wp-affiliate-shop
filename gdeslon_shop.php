@@ -25,8 +25,7 @@ function psOptionsPage()
 	$isUpdated = FALSE;
 	$isDeleted = FALSE;
 	$isError = FALSE;
-	if (isset($_POST['action'])&&($_POST['action'] == 'update'))
-	{
+	if (isset($_POST['action'])&&($_POST['action'] == 'update')){
 		update_option('ps_get_enable', isset($_POST['ps_get_enable']) ? '1' : '0');
 		update_option('ps_use_posts', isset($_POST['ps_use_posts']) ? '1' : '0');
 		update_option('ps_url', $_POST['ps_url']);

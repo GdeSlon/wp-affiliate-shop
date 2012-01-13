@@ -1,4 +1,4 @@
- <?php
+<?php
 header('Content-type: text/html; charset=utf-8');
 ignore_user_abort(true);
 set_time_limit(36000);
@@ -13,7 +13,7 @@ $getEnable = (int)get_option('ps_get_enable');
 if (empty($_GET['code'])) {
 	if (!empty($_SERVER['REQUEST_URI'])) exit;
 } else {
-    if(!$getEnable) die('Возможность обновления базы GET-запросом выключена');
+	if(!$getEnable) die('Возможность обновления базы GET-запросом выключена');
 	if ($accessCode != $_GET['code']) exit;
 }
 
@@ -22,33 +22,27 @@ $path = $base.'/downloads';
 
 
 set_error_handler(
-    create_function(
-        '$severity, $message, $file, $line',
-        'throw new ErrorException($message, $severity, $severity, $file, $line);'
-    )
+	create_function(
+		'$severity, $message, $file, $line',
+		'throw new ErrorException($message, $severity, $severity, $file, $line);'
+	)
 );
 
 try{
-    file_put_contents ($path.'/test.txt', 'Hello File');
-    @unlink($path.'/test.txt');
+	file_put_contents ($path.'/test.txt', 'Hello File');
+	@unlink($path.'/test.txt');
 }catch (ErrorException $e ){
-    die("Не хватает прав на запись в каталог $path . Выставьте нужные права и попробуйте еще раз.");
+	die("Не хватает прав на запись в каталог $path . Выставьте нужные права и попробуйте еще раз.");
 }
 
 restore_error_handler();
-
-$url = get_option('ps_url');
-
-
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $url);
-curl_setopt($ch, CURLOPT_HEADER, false);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-$file = curl_exec($ch);
-curl_close($ch);
+if (!GdeSlonImport::checkCurl() && !GdeSlonImport::checkFileGetContentsCurl())
+{
+	die("Не найдено расширение php cUrl, а получение удаленного файла запрещено в настройках php.ini");
+}
 
 $f = fopen($path.'/archive.zip', 'w');
-fwrite($f, $file);
+fwrite($f, GdeSlonImport::getFileFromUrl());
 fclose($f);
 
 
@@ -109,16 +103,16 @@ if ($ps && $pe) {
 		if ($ps !== false && $pe !== false) {
 			$category = mb_substr($contentCats, $ps + mb_strlen('<category', 'utf-8'), $pe - $ps - mb_strlen('<category', 'utf-8'), 'utf-8');
 			$contentCats = mb_substr($contentCats, $pe + mb_strlen('</category>', 'utf-8'), mb_strlen($contentCats, 'utf-8'), 'utf-8');
-			
+
 			$matches = array();
 			preg_match('/ id="(\d+)"/', $category, $matches);
 			$id = $matches[1];
-			
+
 			$ps = mb_strpos($category, '>', 0, 'utf-8');
 			$title = mb_substr($category, $ps + 1, mb_strlen($category, 'utf-8'), 'utf-8');
-            $title = str_replace('<![CDATA[', '', $title);
-            $title = str_replace(']]>', '', $title);
-			
+			$title = str_replace('<![CDATA[', '', $title);
+			$title = str_replace(']]>', '', $title);
+
 			$cat = array(
 				'id' => $id,
 				'title' => $title
@@ -155,38 +149,38 @@ while (true) {
 	$pep = mb_strpos($content, '</offer>', 0, 'utf-8');
 	if ($psp !== false && $pep !== false) {
 		$product = mb_substr($content, $psp + mb_strlen('<offer ', 'utf-8'), $pep - $psp - mb_strlen('<offer ', 'utf-8'), 'utf-8');
-		
+
 		$matches = array();
-		
+
 		preg_match('/ id="(\d+)"/', $product, $matches);
 		$id = @$matches[1];
-		
+
 		preg_match('|\<url\>(.+)\</url\>|', $product, $matches);
 		$url = @$matches[1];
-		
+
 		preg_match('|\<price\>(.+)\</price\>|', $product, $matches);
 		$price = @$matches[1];
-		
+
 		preg_match('|\<currencyId\>(.+)\</currencyId\>|', $product, $matches);
 		$currency = @$matches[1];
-		
+
 		preg_match('|\<picture\>(.+)\</picture\>|', $product, $matches);
 		$image = @$matches[1];
-		
+
 		preg_match('|\<name\>(.+)\</name\>|', $product, $matches);
 		$title = @$matches[1];
-        $title = str_replace('<![CDATA[', '', $title);
-        $title = str_replace(']]>', '', $title);
-		
+		$title = str_replace('<![CDATA[', '', $title);
+		$title = str_replace(']]>', '', $title);
+
 		$ps = mb_strpos($product, '<description>', 0, 'utf-8');
 		$pe = mb_strpos($product, '</description>', 0, 'utf-8');
 		$descr = mb_substr($product, $ps + mb_strlen('<description>', 'utf-8'), $pe - $ps - mb_strlen('<description>', 'utf-8'), 'utf-8');
-        $descr = str_replace('<![CDATA[', '', $descr);
-        $descr = str_replace(']]>', '', $descr);
-		
+		$descr = str_replace('<![CDATA[', '', $descr);
+		$descr = str_replace(']]>', '', $descr);
+
 		preg_match('|\<categoryId\>(.+)\</categoryId\>|', $product, $matches);
 		$categoryId = @$matches[1];
-		
+
 		$title = mysql_real_escape_string($title);
 		$descr = mysql_real_escape_string($descr);
 		$res = $wpdb->get_row("SELECT * FROM ps_products WHERE id = '{$id}'");

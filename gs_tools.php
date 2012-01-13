@@ -37,4 +37,47 @@ function makeLink($page = 1) {
 	return $res.$delimiter.implode('&',$params);
 }
 
+
+/**
+ * Will be used if future to replace cron.php
+ */
+class GdeSlonImport
+{
+	static public function checkCurl()
+	{
+		return function_exists('curl_init');
+	}
+
+	static public function checkFileGetContentsCurl()
+	{
+		return ini_get('allow_url_fopen');
+	}
+
+	static public function getFileFromUrl()
+	{
+		$url = get_option('ps_url');
+		if (!self::checkCurl())
+		{
+			$opts = array(
+				'http'=>array(
+					'method'=>"GET",
+					'header'=>"Accept-language: en\r\n"
+				)
+			);
+			$context = stream_context_create($opts);
+			return file_get_contents($url, false, $context);
+		}
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_HEADER, false);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$file = curl_exec($ch);
+		curl_close($ch);
+		return $file;
+	}
+
+}
+
+
+
 ?>
