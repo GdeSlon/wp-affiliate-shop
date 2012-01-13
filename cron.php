@@ -1,4 +1,4 @@
-<?php
+ <?php
 header('Content-type: text/html; charset=utf-8');
 ignore_user_abort(true);
 set_time_limit(36000);
@@ -142,6 +142,8 @@ if ($ps && $pe) {
 				$wpdb->query("INSERT INTO ps_categories SET id = {$item['id']}, title = '{$item['title']}'");
 			}
 		}
+		//обновление таксономии
+		importTerm($item);
 	}
 }
 
@@ -217,7 +219,8 @@ while (true) {
 				category_id = '{$categoryId}',
 				marked = 1, status = 1");
 		}
-		
+		//обновление поста
+		importPost($wpdb->get_row("SELECT * FROM ps_products WHERE id = '{$id}'"));
 		unset($content);
 	} else { break; }
 }

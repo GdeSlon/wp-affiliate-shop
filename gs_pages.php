@@ -4,50 +4,6 @@ function fixUrl($url) {
   return preg_replace('/(:?\?.+?)\?/', '$1&', $url);
 }
 
-function showCategoryLevel($tops, $parentId = null) {
-	global $wpdb;
-	if (empty($parentId))
-		$cats = $wpdb->get_results("SELECT * FROM ps_categories WHERE parent_id IS NULL ORDER BY title ASC");
-	else
-		$cats = $wpdb->get_results("SELECT * FROM ps_categories WHERE parent_id = {$parentId} ORDER BY title ASC");
-
-	echo '<ul>';
-	foreach ($cats as $item) {
-		if (in_array($item->id, $tops)) {
-			echo '<li>'.$item->title.'</li>';
-			showCategoryLevel($tops, $item->id);
-		} else {
-			echo '<li><a href="'.fixUrl(get_permalink(get_option('ps_page')).'?cat='.$item->id).'">'.$item->title.'</a></li>';
-		}
-	}
-	echo '</ul>';
-}
-
-function psCategories() {
-	global $wpdb;
-    
-	$tops = array();
-	if (!empty($_GET['pid'])) {
-		$catId = $wpdb->get_var("SELECT category_id FROM ps_products WHERE id = {$_GET['pid']}");
-		$_GET['cat'] = $catId;
-	}
-	if (!empty($_GET['cat'])) {
-		$catId = (int)$_GET['cat'];
-		$tops = array($catId);
-		$parentId = $wpdb->get_var("SELECT parent_id FROM ps_categories WHERE id = {$catId}");
-		while (!empty($parentId)) {
-			$tops[] = $parentId;
-			$parentId = $wpdb->get_var("SELECT parent_id FROM ps_categories WHERE id = {$parentId}");
-		}
-	}
-	
-	$top = $wpdb->get_results("SELECT * FROM ps_categories WHERE parent_id IS NULL ORDER BY title ASC");
-	echo '<ul>';
-	echo '<li><h2>Разделы каталога</h2>';
-	showCategoryLevel($tops);
-	echo '</li></ul>';
-}
-
 function psMainPage() {
 	global $wpdb;
 	$page = 1;
