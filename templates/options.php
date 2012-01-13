@@ -68,7 +68,7 @@
 		<p><b><?php echo calcProducts()?></b> товаров</p>
 		<form method="post" action="">
 			<input type="hidden" name="action" value="delete"/>
-			<p style="color:red"><input type="checkbox" name="agree" value="1"/> Подтверждаю, что хочу удалить выбранные записи из базы данных навсегда без возможности восстановления</p>
+			<p style="color:red"><input type="checkbox" name="agree" value="1" id="input-agree"/> <label for="input-agree">Подтверждаю, что хочу удалить выбранные записи из базы данных навсегда без возможности восстановления</label></p>
 			<select name="type" id="">
 				<option value="all">Всё</option>
 				<option value="categories">Категории</option>
