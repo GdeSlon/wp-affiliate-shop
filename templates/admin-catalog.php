@@ -47,7 +47,7 @@
 			<tr>
 				<td style="text-align: center;"><input type="checkbox" name="bs[]" value="<?php echo $item->id; ?>" <?php if (!empty($item->bestseller)) echo 'checked="checked"'; ?> /></td>
 				<td style="padding: 2px;"><?php echo $item->id; ?></td>
-				<td><a href="<?php echo get_permalink(get_option('ps_page')); ?>&pid=<?php echo $item->id; ?>" target="_blank"><?php echo $item->title; ?></a></td>
+				<td><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" target="_blank"><?php echo $item->title; ?></a></td>
 				<td style="text-align: right;"><?php echo $item->price; ?>&nbsp;<?php echo $item->currency; ?></td>
 				<td style="text-align: center;"><?php echo $statuses[$item->status]; ?></td>
 				<td><a href="#" onclick="
