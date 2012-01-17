@@ -1,7 +1,7 @@
 <?php
 
 function fixUrl($url) {
-  return preg_replace('/(:?\?.+?)\?/', '$1&', $url);
+	return preg_replace('/(:?\?.+?)\?/', '$1&', $url);
 }
 
 function psMainPage() {
@@ -12,69 +12,69 @@ function psMainPage() {
 	if ($page < 1) $page = 1;
 	$offset = ($page - 1) * $limit;
 	?>
-		<?php
+<?php
 			$search = '';
-			if (!empty($_GET['ps_search'])) {
-				$s = mysql_real_escape_string($_GET['ps_search']);
-				$search = " AND UPPER(title) LIKE UPPER('%$s%') ";
-			}
-			if (!empty($_GET['cat'])) {
-				$catId = (int)$_GET['cat'];
-				$catIDs = getCategoriesChildren($catId);
-				$count = $wpdb->get_var("SELECT COUNT(*) FROM ps_products WHERE status = 1 AND category_id IN (".implode(',', $catIDs).") $search");
-				$products = $wpdb->get_results("SELECT * FROM ps_products WHERE status = 1 AND category_id IN (".implode(',', $catIDs).") $search ORDER BY title LIMIT $offset,$limit");
-			} else {
-				if (!empty($_GET['ps_search'])) {
-					$count = $wpdb->get_var("SELECT COUNT(*) FROM ps_products WHERE status = 1 $search");
-					$products = $wpdb->get_results("SELECT * FROM ps_products WHERE status = 1 $search ORDER BY title LIMIT $offset,$limit");
-				} else {
-					$count = $wpdb->get_var("SELECT COUNT(*) FROM ps_products WHERE status = 1 AND bestseller = 1 $search");
-					$products = $wpdb->get_results("SELECT * FROM ps_products WHERE status = 1 AND bestseller = 1 $search ORDER BY title LIMIT $offset,$limit");
-				}
-			}
+	if (!empty($_GET['ps_search'])) {
+		$s = mysql_real_escape_string($_GET['ps_search']);
+		$search = " AND UPPER(title) LIKE UPPER('%$s%') ";
+	}
+	if (!empty($_GET['cat'])) {
+		$catId = (int)$_GET['cat'];
+		$catIDs = getCategoriesChildren($catId);
+		$count = $wpdb->get_var("SELECT COUNT(*) FROM ps_products WHERE status = 1 AND category_id IN (".implode(',', $catIDs).") $search");
+		$products = $wpdb->get_results("SELECT * FROM ps_products WHERE status = 1 AND category_id IN (".implode(',', $catIDs).") $search ORDER BY title LIMIT $offset,$limit");
+	} else {
+		if (!empty($_GET['ps_search'])) {
+			$count = $wpdb->get_var("SELECT COUNT(*) FROM ps_products WHERE status = 1 $search");
+			$products = $wpdb->get_results("SELECT * FROM ps_products WHERE status = 1 $search ORDER BY title LIMIT $offset,$limit");
+		} else {
+			$count = $wpdb->get_var("SELECT COUNT(*) FROM ps_products WHERE status = 1 AND bestseller = 1 $search");
+			$products = $wpdb->get_results("SELECT * FROM ps_products WHERE status = 1 AND bestseller = 1 $search ORDER BY title LIMIT $offset,$limit");
+		}
+	}
+	?>
+<?php if (empty($products)) { ?>
+	<p>Товаров не найдено</p>
+	<?php } ?>
+<table class="products-list">
+	<tr>
+		<?php $cnt = 0; ?>
+		<?php foreach ($products as $item) { ?>
+		<td style="text-align: left;">
+			<div class="products-image"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php echo $item->image; ?>" style="width: 100px; height: 100px;" /></a></div>
+			<p class="products-name"><?php echo $item->title; ?></p>
+			<p class="products-price"><?php echo $item->price; ?> <?php echo ($item->currency == 'RUR' ? 'руб.' : $item->currency); ?></p>
+			<p class="products-details"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php bloginfo('url'); ?>/wp-content/plugins/<?php echo basename(dirname(__FILE__)); ?>/img/details.png" alt="Подробнее" /></a></p>
+		</td>
+		<?php
+  						$cnt++;
+		if ($cnt >= get_option('ps_row_limit')) {
+			$cnt = 0;
+			echo '</tr><tr>';
+		}
 		?>
-		<?php if (empty($products)) { ?>
-			<p>Товаров не найдено</p>
 		<?php } ?>
-		<table class="products-list">
-			<tr>
-				<?php $cnt = 0; ?>
-				<?php foreach ($products as $item) { ?>
-					<td style="text-align: left;">
-						<div class="products-image"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php echo $item->image; ?>" style="width: 100px; height: 100px;" /></a></div>
-						<p class="products-name"><?php echo $item->title; ?></p>
-						<p class="products-price"><?php echo $item->price; ?> <?php echo ($item->currency == 'RUR' ? 'руб.' : $item->currency); ?></p>
-						<p class="products-details"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php bloginfo('url'); ?>/wp-content/plugins/<?php echo basename(dirname(__FILE__)); ?>/img/details.png" alt="Подробнее" /></a></p>
-					</td>
-					<?php
-						$cnt++;
-						if ($cnt >= get_option('ps_row_limit')) {
-							$cnt = 0;
-							echo '</tr><tr>';
-						}
-					?>
-				<?php } ?>
-			</tr>
-		</table>
-		<p>
-			<?php
+	</tr>
+</table>
+<p>
+<?php
 				$modulus = 3;
-				$pages = ceil($count / $limit);
-				if ($pages > 1) {
-					$pageMin = $page - $modulus;
-					if ($pageMin < 1) $pageMin = 1;
-					$pageMax = $page + $modulus;
-					if ($pageMax > $pages) $pageMax = $pages;
-					
-					if ($pageMin > 1) echo '<a href="'.makeLink(1).'">1</a>&nbsp;...';
-					for ($i = $pageMin; $i < $page; $i++) echo '&nbsp;<a href="'.makeLink($i).'">'.$i.'</a>&nbsp;';
-					echo '&nbsp;<b>'.$page.'</b>&nbsp;';
-					for ($i = $page + 1; $i <= $pageMax; $i++) echo '&nbsp;<a href="'.makeLink($i).'">'.$i.'</a>&nbsp;';
-					if ($pageMax < $pages) echo '...&nbsp;<a href="'.makeLink($pages).'">'.$pages.'</a>';
-				}
-			?>
-		</p>
-	<?php
+	$pages = ceil($count / $limit);
+	if ($pages > 1) {
+		$pageMin = $page - $modulus;
+		if ($pageMin < 1) $pageMin = 1;
+		$pageMax = $page + $modulus;
+		if ($pageMax > $pages) $pageMax = $pages;
+
+		if ($pageMin > 1) echo '<a href="'.makeLink(1).'">1</a>&nbsp;...';
+		for ($i = $pageMin; $i < $page; $i++) echo '&nbsp;<a href="'.makeLink($i).'">'.$i.'</a>&nbsp;';
+		echo '&nbsp;<b>'.$page.'</b>&nbsp;';
+		for ($i = $page + 1; $i <= $pageMax; $i++) echo '&nbsp;<a href="'.makeLink($i).'">'.$i.'</a>&nbsp;';
+		if ($pageMax < $pages) echo '...&nbsp;<a href="'.makeLink($pages).'">'.$pages.'</a>';
+	}
+	?>
+</p>
+<?php
 }
 
 function psProductPage() {
@@ -82,129 +82,137 @@ function psProductPage() {
 	$id = (int)$_GET['pid'];
 	$product = $wpdb->get_row("SELECT * FROM ps_products WHERE id = {$id}");
 	if (!empty($product)) {
-	?>
-		<table>
-			<tr>
-				<td style="vertical-align: top;">
-					<img src="<?php echo $product->image; ?>" style="width: 250px;" />
-					<p class="products-price"><?php echo $product->price; ?> <?php echo ($product->currency == 'RUR' ? 'руб.' : $product->currency); ?></p>
-					<p><a href="<?php echo bloginfo('url').'/wp-content/plugins/'.basename(dirname(__FILE__)).'/go.php?url='.$product->url; ?>" target="_blank">
-						<img src="<?php bloginfo('url'); ?>/wp-content/plugins/<?php echo basename(dirname(__FILE__)); ?>/img/buy.png" alt="Купить <?php echo $product->title; ?>" />
-					</a></p>
-				</td>
-				<td>&nbsp;</td>
-				<td style="vertical-align: top;">
-					<h3 style="margin-top: 0;"><?php echo $product->title; ?></h3>
-					<div class="products-description"><p><?php echo nl2br(html_entity_decode($product->description)); ?></p></div>
-				</td>
-			</tr>
-		</table>
+		?>
+	<table>
+		<tr>
+			<td style="vertical-align: top;">
+				<img src="<?php echo $product->image; ?>" style="width: 250px;" />
+				<p class="products-price"><?php echo $product->price; ?> <?php echo ($product->currency == 'RUR' ? 'руб.' : $product->currency); ?></p>
+				<p><a href="<?php echo bloginfo('url').'/wp-content/plugins/'.basename(dirname(__FILE__)).'/go.php?url='.$product->url; ?>" target="_blank">
+					<img src="<?php bloginfo('url'); ?>/wp-content/plugins/<?php echo basename(dirname(__FILE__)); ?>/img/buy.png" alt="Купить <?php echo $product->title; ?>" />
+				</a></p>
+			</td>
+			<td>&nbsp;</td>
+			<td style="vertical-align: top;">
+				<h3 style="margin-top: 0;"><?php echo $product->title; ?></h3>
+				<div class="products-description"><p><?php echo nl2br(html_entity_decode($product->description)); ?></p></div>
+			</td>
+		</tr>
+	</table>
 	<?php
 	}
 	?>
-	
-	<h3>Похожие товары</h3>
-	<table class="products-list">
-		<tr>
-			<?php
-				$catIDs = getCategoriesChildren($product->category_id);
-				$products = $wpdb->get_results("SELECT * FROM ps_products WHERE status = 1 AND category_id IN (".implode(',', $catIDs).") AND id <> {$product->id} ORDER BY RAND() LIMIT ".get_option('ps_row_limit'));
-			?>
-			<?php foreach ($products as $item) { ?>
-				<td style="text-align: left;">
-					<div class="products-image"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php echo $item->image; ?>" style="width: 100px; height: 100px;" /></a></div>
-					<p class="products-name"><?php echo $item->title; ?></p>
-					<p class="products-price"><?php echo $item->price; ?> <?php echo ($item->currency == 'RUR' ? 'руб.' : $item->currency); ?></p>
-					<p class="products-details"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php bloginfo('url'); ?>/wp-content/plugins/<?php echo basename(dirname(__FILE__)); ?>/img/details.png" alt="Подробнее" /></a></p>
-				</td>
-			<?php } ?>
-		</tr>
-	</table>
-	
-	<?php
-		$products = $wpdb->get_results("SELECT * FROM ps_products WHERE status = 1 AND bestseller = 1 ORDER BY RAND() LIMIT ".get_option('ps_row_limit'));
+
+<h3>Похожие товары</h3>
+<table class="products-list">
+	<tr>
+		<?php
+  				$catIDs = getCategoriesChildren($product->category_id);
+		$products = $wpdb->get_results("SELECT * FROM ps_products WHERE status = 1 AND category_id IN (".implode(',', $catIDs).") AND id <> {$product->id} ORDER BY RAND() LIMIT ".get_option('ps_row_limit'));
+		?>
+		<?php foreach ($products as $item) { ?>
+		<td style="text-align: left;">
+			<div class="products-image"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php echo $item->image; ?>" style="width: 100px; height: 100px;" /></a></div>
+			<p class="products-name"><?php echo $item->title; ?></p>
+			<p class="products-price"><?php echo $item->price; ?> <?php echo ($item->currency == 'RUR' ? 'руб.' : $item->currency); ?></p>
+			<p class="products-details"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php bloginfo('url'); ?>/wp-content/plugins/<?php echo basename(dirname(__FILE__)); ?>/img/details.png" alt="Подробнее" /></a></p>
+		</td>
+		<?php } ?>
+	</tr>
+</table>
+
+		<?php
+  		$products = $wpdb->get_results("SELECT * FROM ps_products WHERE status = 1 AND bestseller = 1 ORDER BY RAND() LIMIT ".get_option('ps_row_limit'));
 	?>
-    <?php if (!empty($products)) { ?>
+<?php if (!empty($products)) { ?>
 	<h3>Бестселлеры</h3>
 	<table class="products-list">
 		<tr>
 			<?php foreach ($products as $item) { ?>
-				<td style="text-align: left;">
-					<div class="products-image"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php echo $item->image; ?>" style="width: 100px; height: 100px;" /></a></div>
-					<p class="products-name"><?php echo $item->title; ?></p>
-					<p class="products-price"><?php echo $item->price; ?> <?php echo ($item->currency == 'RUR' ? 'руб.' : $item->currency); ?></p>
-					<p class="products-details"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php bloginfo('url'); ?>/wp-content/plugins/<?php echo basename(dirname(__FILE__)); ?>/img/details.png" alt="Подробнее" /></a></p>
-				</td>
+			<td style="text-align: left;">
+				<div class="products-image"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php echo $item->image; ?>" style="width: 100px; height: 100px;" /></a></div>
+				<p class="products-name"><?php echo $item->title; ?></p>
+				<p class="products-price"><?php echo $item->price; ?> <?php echo ($item->currency == 'RUR' ? 'руб.' : $item->currency); ?></p>
+				<p class="products-details"><a href="<?php echo fixUrl(get_permalink(get_option('ps_page')).'?pid='.$item->id); ?>" title="<?php echo $item->title; ?>"><img src="<?php bloginfo('url'); ?>/wp-content/plugins/<?php echo basename(dirname(__FILE__)); ?>/img/details.png" alt="Подробнее" /></a></p>
+			</td>
 			<?php } ?>
 		</tr>
 	</table>
-    <?php } ?>
-	<?php
+	<?php } ?>
+		<?php
+  }
+
+/**
+ * Генерация хлебных крошек
+ * @return void
+ */
+function psGetBreadCrumbs()
+{
+	global $wpdb;
+	echo '<p>';
+	$br = array('<a '/*href="'.get_permalink(get_option('ps_page')).'"*/.' style="text-decoration:none;cursor:default;">Каталог</a>');
+	if (!empty($_GET['pid']))
+		$catId = $wpdb->get_var("SELECT category_id FROM ps_products WHERE id = {$_GET['pid']}");
+	else
+		$catId = !empty($_GET['cat']) ? $_GET['cat'] : NULL;
+
+	if (!empty($catId)) {
+		$tops = array($catId);
+		$parentId = $wpdb->get_var("SELECT parent_id FROM ps_categories WHERE id = {$catId}");
+		while (!empty($parentId))
+		{
+			$tops[] = $parentId;
+			$parentId = $wpdb->get_var("SELECT parent_id FROM ps_categories WHERE id = {$parentId}");
+		}
+		$tops = array_reverse($tops);
+		foreach ($tops as $catId)
+		{
+			$br[] = '<a href="'.fixUrl(get_permalink(get_option('ps_page')).'?cat='.$catId).'">'.$wpdb->get_var("SELECT title FROM ps_categories WHERE id = {$catId}").'</a>';
+		}
+	}
+	echo implode(' &gt; ', $br);
+	echo '</p>';
 }
 
 function psCatalog($content) {
 	global $wpdb, $post;
-    if ($post->ID == get_option('ps_page')) {
-    	
-    	if (!empty($_GET['ps_search'])) {
-    		if (empty($_GET['ps_search_cat'])) {
-    			$_GET['pid'] = '';
-    			$_GET['cat'] = '';
-    		} else {
-    			if (!empty($_GET['pid'])) {
-    				$_GET['cat'] = $wpdb->get_var("SELECT category_id FROM ps_products WHERE id = {$_GET['pid']}");
-    				$_GET['pid'] = '';
-    			}
-    		}
-    	}
-    	
-    	echo '<p>';
-    	$br = array('<a href="'.get_permalink(get_option('ps_page')).'">Каталог</a>');
-    	$catId = null;
-    	if (!empty($_GET['cat'])) $catId = $_GET['cat'];
-    	if (!empty($_GET['pid'])) $catId = $wpdb->get_var("SELECT category_id FROM ps_products WHERE id = {$_GET['pid']}");
-    	if (!empty($catId)) {
-			$tops = array($catId);
-			$parentId = $wpdb->get_var("SELECT parent_id FROM ps_categories WHERE id = {$catId}");
-			while (!empty($parentId)) {
-				$tops[] = $parentId;
-				$parentId = $wpdb->get_var("SELECT parent_id FROM ps_categories WHERE id = {$parentId}");
+	if ($post->ID != get_option('ps_page'))
+		return $content;
+	if (!empty($_GET['ps_search']))
+	{
+		if (empty($_GET['ps_search_cat']))
+		{
+			$_GET['pid'] = $_GET['cat'] = '';
+		} else {
+			if (!empty($_GET['pid']))
+			{
+				$_GET['cat'] = $wpdb->get_var("SELECT category_id FROM ps_products WHERE id = {$_GET['pid']}");
+				$_GET['pid'] = '';
 			}
-			$tops = array_reverse($tops);
-			foreach ($tops as $catId) {
-				$catName =  $wpdb->get_var("SELECT title FROM ps_categories WHERE id = {$catId}");
-				$item = get_permalink(get_option('ps_page')).'?cat='.$catId;
-        $br[] = '<a href="'.fixUrl($item).'">'.$catName.'</a>';
-			}
-			if (!empty($_GET['pid'])) {
-				$prodName =  $wpdb->get_var("SELECT title FROM ps_products WHERE id = {$_GET['pid']}");
-				$item = get_permalink(get_option('ps_page')).'?pid='.$_GET['pid'];
-        $br[] = '<a href="'.fixUrl($item).'">'.$catName.'</a>';
-			}
-    	}
-    	echo implode(' &gt; ', $br);
-    	echo '</p>';
-    	
-    	echo '<form method="get" action="">';
-    	echo '<p style="text-align: left;">';
-    		foreach ($_GET as $key => $val) {
-    			if ($key != 'ps_search' && $key != 'ps_search_cat') {
-    				echo '<input type="hidden" name="'.$key.'" value="'.$val.'" />';
-    			}
-    		}
-    		echo '<input type="text" name="ps_search" value="'.@$_GET['ps_search'].'" size="40" />';
-    		echo '<input type="submit" value="Искать" />';
-    		if (!empty($_GET['cat']) || !empty($_GET['pid'])) {
-    			echo '<div style="text-align: left;"><input type="checkbox" name="ps_search_cat" id="ps_search_cat" value="1" '.(!empty($_GET['ps_search_cat']) ? 'checked="checked"' : '').' /> <label for="ps_search_cat">Искать в данной категории</label></div>';
-    		}
-    	echo '</p>';
-    	echo '</form>';
-    	
-    	if (empty($_GET['pid'])) psMainPage();
-    	if (!empty($_GET['pid'])) psProductPage();
-    	
-        return $content;
-    } else return $content;
+		}
+	}
+
+	psGetBreadCrumbs();
+
+	echo '<form method="get" action="">';
+	echo '<p style="text-align: left;">';
+	foreach ($_GET as $key => $val) {
+		if ($key != 'ps_search' && $key != 'ps_search_cat') {
+			echo '<input type="hidden" name="'.$key.'" value="'.$val.'" />';
+		}
+	}
+	echo '<input type="text" name="ps_search" value="'.@$_GET['ps_search'].'" size="40" />';
+	echo '<input type="submit" value="Искать" />';
+	if (!empty($_GET['cat']) || !empty($_GET['pid'])) {
+		echo '<div style="text-align: left;"><input type="checkbox" name="ps_search_cat" id="ps_search_cat" value="1" '.(!empty($_GET['ps_search_cat']) ? 'checked="checked"' : '').' /> <label for="ps_search_cat">Искать в данной категории</label></div>';
+	}
+	echo '</p>';
+	echo '</form>';
+
+	if (empty($_GET['pid'])) psMainPage();
+	if (!empty($_GET['pid'])) psProductPage();
+
+	return $content;
 }
 
 function psTitle($title) {
