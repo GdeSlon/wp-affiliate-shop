@@ -43,7 +43,7 @@
 				<th>Статус</th>
 				<th></th>
 			</tr>
-			<?php foreach ($products as $item) { ?>
+			<?php foreach ($products as $item):?>
 			<tr>
 				<td style="text-align: center;"><input type="checkbox" name="bs[]" value="<?php echo $item->id; ?>" <?php if (!empty($item->bestseller)) echo 'checked="checked"'; ?> /></td>
 				<td style="padding: 2px;"><?php echo $item->id; ?></td>
@@ -80,7 +80,7 @@
 					<input type="submit" class="button-primary" value="Сохранить" />
 				</td>
 			</tr>
-			<?php } ?>
+			<?php endforeach?>
 		</table>
 		<?php if (!empty($products)) { ?>
 		<p class="submit">
