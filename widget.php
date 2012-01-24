@@ -21,25 +21,10 @@ class GdeSlonWidget extends WP_Widget
 		$title = apply_filters('widget_title', $instance['title']);
 		echo $before_widget;
 		//содержание функции psCategories
-		echo '<ul><li>', $before_title, '<h2>', ($title ? $title : 'Разделы каталога'), '</h2>', $after_title;
-		$this->_showCategoryLevel();
+		echo '<ul><li>', $before_title, ($title ? $title : 'Разделы каталога'), $after_title;
+		wp_list_categories(array('taxonomy'	=> 'ps_category', 'title_li'	=> ''));
 		echo '</li></ul>';
 		echo $after_widget;
-	}
-
-	protected function _showCategoryLevel($tops = array(), $parentId = null)
-	{
-		$cats = $this->_wpdb->get_results("SELECT * FROM ps_categories WHERE parent_id ".(empty($parentId) ? 'IS NULL' : ' = '.$parentId)." ORDER BY title ASC");
-		echo '<ul>';
-		foreach ($cats as $item) {
-			if (in_array($item->id, $tops)) {
-				echo '<li>'.$item->title.'</li>';
-				$this->__showCategoryLevel($tops, $item->id);
-			} else {
-				echo '<li><a href="'.fixUrl(get_permalink(get_option('ps_page')).'?cat='.$item->id).'">'.$item->title.'</a></li>';
-			}
-		}
-		echo '</ul>';
 	}
 
 	/**
