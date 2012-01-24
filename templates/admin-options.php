@@ -17,21 +17,10 @@
 				<th scope="row"><label for="ps_url">Ссылка на выгрузку</label></th>
 				<td><input name="ps_url" id="ps_url" type="text" value="<?php echo $url; ?>" class="regular-text" style="width: 550px;" /></td>
 			</tr>
-			<tr valign="top">
-				<th scope="row"><label for="ps_page">Страница каталога</label></th>
-				<td>
-					<?php $pages = get_pages(); ?>
-					<select name="ps_page"  id="ps_page" style="width: 550px;">
-						<?php foreach ($pages as $item) { ?>
-						<option value="<?php echo $item->ID; ?>" <?php if ($ps_page == $item->ID) echo 'selected="selected"'; ?>><?php echo $item->post_title; ?></option>
-						<?php } ?>
-					</select>
-				</td>
-			</tr>
-			<tr valign="top">
-				<th scope="row"><label for="ps_limit">Кол-во товаров на странице</label></th>
-				<td><input name="ps_limit" id="ps_limit" type="text" value="<?php echo get_option('ps_limit'); ?>" class="regular-text" style="width: 100px;" /></td>
-			</tr>
+<!--			<tr valign="top">-->
+<!--				<th scope="row"><label for="ps_limit">Кол-во товаров на странице</label></th>-->
+<!--				<td><input name="ps_limit" id="ps_limit" type="text" value="--><?php //echo get_option('ps_limit'); ?><!--" class="regular-text" style="width: 100px;" /></td>-->
+<!--			</tr>-->
 			<tr valign="top">
 				<th scope="row"><label for="ps_row_limit">Кол-во товаров в строке</label></th>
 				<td><input name="ps_row_limit" id="ps_row_limit" type="text" value="<?php echo get_option('ps_row_limit'); ?>" class="regular-text" style="width: 100px;" /></td>
@@ -39,10 +28,6 @@
 			<tr valign="top">
 				<th scope="row"><label for="ps_get_enable">Обновлять по GET-запросу</label></th>
 				<td><input name="ps_get_enable" id="ps_get_enable" type="checkbox" <?php if($get_enable) echo "checked='yes'"; ?> value="enable" /></td>
-			</tr>
-			<tr valign="top">
-				<th scope="row"><label for="ps_use_posts">Использовать посты</label></th>
-				<td><input name="ps_use_posts" id="ps_use_posts" type="checkbox" <?php if($use_posts) echo "checked='yes'"; ?> value="enable" /></td>
 			</tr>
 		</table>
 		<p class="submit">
@@ -56,6 +41,7 @@
 		<b>php <?php echo ABSPATH; ?>wp-content/plugins/<?php echo $dirname; ?>/cron.php</b><br /><br />
 		<b>GET <?php bloginfo('url'); ?>/wp-content/plugins/<?php echo $dirname; ?>/cron.php?code=<?php echo get_option('ps_access_code'); ?></b><br />
 		<br />
+		Либо запустите импорт товаров вручную:<br />
 		<p>Для выкачивания файла будет использован <strong><?php echo GdeSlonImport::checkCurl() ? 'cUrl' : 'file_get_contents'?></strong></p>
 		<form method="get" action="<?php bloginfo('url'); ?>/wp-content/plugins/<?php echo $dirname; ?>/cron.php" target="_blank">
 			<input type="hidden" name="code" value="<?php echo get_option('ps_access_code'); ?>" />
@@ -73,9 +59,19 @@
 	</p>
 	<?php endif?>
 
+	<h3>Виджет</h3>
+	<div style="border: 1px solid #aaa; padding: 7px;">
+		Для использования виджета необходимо:<br />
+		<ol>
+			<li>Поддержка виджетов в вашей теме</li>
+			<li>Поддержка боковой панели в вашей теме</li>
+			<li>Добавление <a href="<?php bloginfo('url'); ?>/wp-admin/widgets.php">виджета</a> на боковую панель блога.
+				<br>(перейдите по ссылки и перетяните GdeSlon Widget на вашу боковую панель)</li>
+		</ol>
+	</div>
+
 	<?php if (calcCategories()+calcProducts() > 0):?>
 	<h3>Удаление данных</h3>
-	<p style="color:red">Внимание! Посты удалены не будут!</p>
 	<div style="border: 1px solid #aaa; padding: 7px;">
 		<p>В базе сейчас:</p>
 		<p><b><?php echo calcCategories()?></b> категорий</p>
