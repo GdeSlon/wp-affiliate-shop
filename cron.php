@@ -124,19 +124,9 @@ if ($ps && $pe) {
 			$cats[] = $cat;
 		} else break;
 	}
-	foreach ($cats as $item) {
+	foreach ($cats as $item)
+	{
 		$item['title'] = mysql_real_escape_string($item['title']);
-		$res = $wpdb->get_row("SELECT * FROM ps_categories WHERE id = {$item['id']}");
-		if (!empty($res)) {
-			$wpdb->query("UPDATE ps_categories SET title = '{$item['title']}' WHERE id = {$item['id']}");
-		} else {
-			if (!empty($item['parent_id'])) {
-				$wpdb->query("INSERT INTO ps_categories SET id = {$item['id']}, parent_id = {$item['parent_id']}, title = '{$item['title']}'");
-			} else {
-				$wpdb->query("INSERT INTO ps_categories SET id = {$item['id']}, title = '{$item['title']}'");
-			}
-		}
-		//обновление таксономии
 		importTerm($item);
 	}
 }
@@ -183,42 +173,22 @@ while (true) {
 
 		$title = mysql_real_escape_string($title);
 		$descr = mysql_real_escape_string($descr);
-		$res = $wpdb->get_row("SELECT * FROM ps_products WHERE id = '{$id}'");
-		if (!empty($res)) {
-			if ($res->status != 2) {
-				if (!empty($res->manual)) {
-					$title = $res->title;
-					$descr = $res->description;
-				}
-				$wpdb->query("UPDATE ps_products SET
-					title = '{$title}',
-					description = '{$descr}',
-					url = '{$url}',
-					price = '{$price}',
-					currency = '{$currency}',
-					image = '{$image}',
-					category_id = '{$categoryId}',
-					marked = 1, status = 1
-					WHERE id = '{$id}'");
-			}
-		} else {
-			$wpdb->query("INSERT INTO ps_products SET
-				id = '{$id}',
-				title = '{$title}',
-				description = '{$descr}',
-				url = '{$url}',
-				price = '{$price}',
-				currency = '{$currency}',
-				image = '{$image}',
-				category_id = '{$categoryId}',
-				marked = 1, status = 1");
-		}
+
 		//обновление поста
-		importPost($wpdb->get_row("SELECT * FROM ps_products WHERE id = '{$id}'"));
+		importPost(array(
+			'id'			=> $id,
+			'title'			=> $title,
+			'description'	=> $descr,
+			'url'			=> $url,
+			'price'			=> $price,
+			'currency'		=> $currency,
+			'image'			=> $image,
+			'category_id'	=> $categoryId,
+		));
 		unset($content);
 	} else { break; }
 }
-$wpdb->query("UPDATE ps_products SET status = 0 WHERE marked = 0");
+//$wpdb->query("UPDATE ps_products SET status = 0 WHERE marked = 0");
 
 fclose($f);
 
