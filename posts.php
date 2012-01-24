@@ -158,16 +158,14 @@ function filter_single_template( $template )
 	// If there's a tpl in a (child theme or theme with no child)
 	if ( file_exists( get_stylesheet_directory() .'/'. $template_file ) )
 		return get_stylesheet_directory() .'/'. $template_file;
-		// If there's a tpl in the parent of the current child theme
-/*	else if ( file_exists( TEMPLATEPATH . DIRECTORY_SEPARATOR . $template_file ) )
-		return TEMPLATEPATH . DIRECTORY_SEPARATOR . $template_file;*/
+	// If there's a tpl in the parent of the current child theme
+	/*	else if ( file_exists( TEMPLATEPATH . DIRECTORY_SEPARATOR . $template_file ) )
+			return TEMPLATEPATH . DIRECTORY_SEPARATOR . $template_file;*/
 	return $template;
 }
 
 
 add_filter('the_content', 'showPost', 999999);
-
-//@todo посоветоваться с Сергеем на счет блока хлебных крошек.
 add_filter('loop_start', 'showBreadCrumbs', 999999);
 function showBreadCrumbs($content)
 {
@@ -232,19 +230,40 @@ function showPost($content)
 	if ($post->post_type != 'ps_catalog')
 		return;
 	?>
-<table>
+<table class="product-table">
 	<tr>
-		<td style="vertical-align: top;">
-			<img src="<?php echo get_post_meta($post->ID, 'image', TRUE)?>" style="width: 250px;" />
+		<td style="vertical-align: top;" class="product-image">
+			<?php if (!is_single()):?>
+			<a href="<?php echo get_permalink($relatedItem->ID) ?>" title="<?php echo $relatedItem->post_title; ?>" style="display: block;">
+			<?php endif?>
+				<img src="<?php echo get_post_meta($post->ID, 'image', TRUE)?>" title="Купить <?php echo $post->post_title; ?>" alt="Купить <?php echo $post->post_title; ?>" style="width: 250px;" />
+			<?php if (!is_single()):?>
+			</a>
+			<?php endif?>
 			<p class="products-price"><?php echo get_post_meta($post->ID, 'price', TRUE); ?> <?php echo (get_post_meta($post->ID, 'currency', TRUE) == 'RUR' ? 'руб.' : get_post_meta($post->ID, 'currency', TRUE)); ?></p>
-			<p><a href="<?php echo bloginfo('url').'/wp-content/plugins/'.basename(dirname(__FILE__)).'/go.php?url='.get_post_meta($post->ID, 'url', TRUE); ?>" target="_blank">
-				<img src="<?php bloginfo('url'); ?>/wp-content/plugins/<?php echo basename(dirname(__FILE__)); ?>/img/buy.png" alt="Купить <?php echo $post->post_title; ?>" />
-			</a></p>
 		</td>
 		<td>&nbsp;</td>
 		<td style="vertical-align: top;">
-			<h3 style="margin-top: 0;"><?php echo $post->post_title; ?></h3>
-			<div class="products-description"><p><?php echo html_entity_decode(nl2br($content)); ?></p></div>
+			<div class="products-description">
+				<p><?php echo html_entity_decode(nl2br($content)); ?></p>
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<a href="<?php echo bloginfo('url').'/wp-content/plugins/'.basename(dirname(__FILE__)).'/go.php?url='.get_post_meta($post->ID, 'url', TRUE); ?>" target="_blank" >
+				<img src="<?php bloginfo('url'); ?>/wp-content/plugins/<?php echo basename(dirname(__FILE__)); ?>/img/buy.png" alt="Купить <?php echo $post->post_title; ?>" height="25px"/>
+			</a>
+		</td>
+		<td>
+		</td>
+		<td>
+			
+			<?php if (!is_single()):?>
+			<a href="<?php echo get_permalink($relatedItem->ID) ?>" title="<?php echo $relatedItem->post_title; ?>" style="display: block;">
+				<img src="<?php bloginfo('url'); ?>/wp-content/plugins/<?php echo basename(dirname(__FILE__)); ?>/img/details.png" alt="Подробнее" />
+			</a>
+			<?php endif?>
 		</td>
 	</tr>
 </table>

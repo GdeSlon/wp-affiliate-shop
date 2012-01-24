@@ -100,7 +100,9 @@ function psStyles()
 	echo '.products-list { width: 100%; border-spacing: 10px;} ';
 	echo '.products-list TD { border: 1px solid #aaa; padding: 4px; vertical-align: top; width: '.round(100 / get_option('ps_row_limit')).'%; } ';
 	echo '.products-price { font-weight: bold; } ';
-	echo '.products-description { font-size: 0.9em; text-align: left; color: #777; } ';
+	echo '.products-description { font-size: 0.9em; text-align: left; color: #777; }';
+	echo '.product-table .product-image img { max-width: none; }';
+	echo '.product-table tr, .product-table td{ border:0; }';
 	echo '</style>';
 }
 
