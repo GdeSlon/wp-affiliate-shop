@@ -1,4 +1,4 @@
-=== Plugin Name ===
+=== GdeSlon Affiliate Shop ===
 Contributors: gdeslon
 Donate link: http://gdeslon.ru/
 Tags: affiliame marketing, affiliate shop
