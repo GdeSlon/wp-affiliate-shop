@@ -192,6 +192,12 @@ while (true) {
 
 fclose($f);
 
+foreach ($cats as $item)
+{
+	$item['title'] = mysql_real_escape_string($item['title']);
+	importTerm($item);
+}
+
 wp_mail(get_option('admin_email'), 'Обновление товаров', 'Обновление товаров завершено!');
 
 echo "Done!\n";
