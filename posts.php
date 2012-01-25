@@ -142,7 +142,14 @@ function get_category_by_outer_id($outerId)
 }
 
 //@todo В чистом виде работает некорректно из-за специфики темы. Надо думать, что можно сделать.
-//add_filter('single_template', 'filter_single_template');
+add_filter('single_template', 'filter_single_template');
+add_filter('body_class', 'filter_single_body_class',9999);
+function filter_single_body_class($class)
+{
+	$classKeys = array_flip($class);
+	unset($classKeys['singular']);
+	return array_flip($classKeys);
+}
 function filter_single_template( $template )
 {
 	global $wp_query;
