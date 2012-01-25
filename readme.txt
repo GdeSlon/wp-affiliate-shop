@@ -9,3 +9,7 @@ Affiliate shop plugin, working with Affiliate Network GdeSlon.ru
 == Description ==
 
 Affiliate shop plugin, working with Affiliate Network GdeSlon.ru
+
+== Installation == 
+
+Coming soon
