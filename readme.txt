@@ -10,6 +10,9 @@ Affiliate shop plugin, working with Affiliate Network GdeSlon.ru
 
 Affiliate shop plugin, working with Affiliate Network GdeSlon.ru
 
+http://blog.gdeslon.ru/2011/09/plagin-dlya-sozdaniya-partnyorskogo-internet-magazina/
+http://www.gdeslon.ru/affiliate-examples/xml-files
+
 == Installation == 
 
 Coming soon
