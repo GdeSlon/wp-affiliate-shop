@@ -235,7 +235,7 @@ function showPost($content)
 	global $wpdb;
 	global $post;
 	if ($post->post_type != 'ps_catalog')
-		return;
+		return $content;
 	?>
 <table class="product-table">
 	<tr>
