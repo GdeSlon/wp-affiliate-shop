@@ -81,11 +81,18 @@ function importTerm(array $category)
 	}
 	else
 	{
-		list($termId) = wp_insert_term($category['title'], 'ps_category', array(
-				'parent'		=> $parentId,
-			));
+		$result = wp_insert_term($category['title'], 'ps_category', array('parent' => $parentId));
+		if (is_array($result))
+			list($termId) = $result;
+		elseif (is_object($result) && get_class($result) == 'WP_Error')
+		{
+			if (!empty($result->error_data['term_exists']))
+				$termId = $result->error_data['term_exists'];
+		}
+
 	}
-	$wpdb->query("UPDATE {$wpdb->terms} SET term_group = {$category['id']} WHERE term_id = $termId");
+	if ($termId)
+		$wpdb->query("UPDATE {$wpdb->terms} SET term_group = {$category['id']} WHERE term_id = $termId");
 }
 
 function importPost(array $item)
