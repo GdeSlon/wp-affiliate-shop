@@ -40,13 +40,11 @@ function psOptionsPage()
 		{
 			if ($type == 'all' || $type == 'products')
 			{
-				foreach(get_posts("post_type=ps_catalog&numberposts=-1") as $obPost)
-					wp_delete_post($obPost->ID, TRUE);
+				deleteProducts();
 			}
 			if ($type == 'all' || $type == 'categories')
 			{
-				foreach(get_terms('ps_category') as $obTerm)
-					wp_delete_term($obTerm->term_id, 'ps_category');
+				deleteCategories();
 			}
 			$isDeleted = TRUE;
 		}
@@ -62,11 +60,24 @@ function psOptionsPage()
 
 function calcCategories()
 {
-	return count(get_terms('ps_category'));
+	global $wpdb;
+	return $wpdb->get_var("SELECT COUNT(*) FROM `{$wpdb->term_taxonomy}` WHERE `taxonomy` = 'ps_category'");
 }
 function calcProducts()
 {
-	return count(get_posts("post_type=ps_catalog&numberposts=-1"));
+	global $wpdb;
+	return $wpdb->get_var("SELECT COUNT(*) FROM `{$wpdb->posts}` WHERE `post_type` = 'ps_catalog'");
+}
+function deleteCategories()
+{
+	global $wpdb;
+	return $wpdb->get_var("DELETE a,b,c FROM {$wpdb->term_taxonomy} a LEFT JOIN {$wpdb->term_relationships} b ON (a.term_taxonomy_id = b.term_taxonomy_id) LEFT JOIN {$wpdb->terms} c ON (a.term_id = c.term_id) WHERE a.taxonomy = 'ps_category';");
+}
+
+function deleteProducts()
+{
+	global $wpdb;
+	return $wpdb->query("DELETE a,b,c FROM {$wpdb->posts} a LEFT JOIN {$wpdb->term_relationships} b ON (a.ID = b.object_id) LEFT JOIN {$wpdb->postmeta} c ON (a.ID = c.post_id) WHERE a.post_type = 'ps_catalog'");
 }
 
 add_action("admin_menu", "psAdminPage", 8);
@@ -85,6 +96,7 @@ function psActivate() {
 	update_option('ps_url', '');
 	update_option('ps_get_enable',1);
 	update_option('ps_access_code', md5(rand(1, 10000).rand(1, 1000).time()));
+	$wpdb->query("alter table {$wpdb->terms} change term_group term_group varchar(300);");
 }
 
 function psDeactivate() {
@@ -92,6 +104,7 @@ function psDeactivate() {
 	delete_option('ps_get_enable');
 	delete_option('ps_url');
 	delete_option('ps_access_code');
+	$wpdb->query("alter table {$wpdb->terms} change term_group term_group bigint;");
 }
 
 function psStyles()
