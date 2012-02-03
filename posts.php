@@ -68,31 +68,38 @@ function importTerm(array $category)
 	{
 		$parentDbItem = get_category_by_outer_id($category['parent_id']);
 		if ($parentDbItem)
-			$parentId = intval($parentDbItem->term_id);
+			$parentId = $parentDbItem->term_id;
 	}
-	if (($dbItem = get_category_by_outer_id($category['id'])) || ($dbItem = $wpdb->get_row("SELECT * FROM {$wpdb->terms} WHERE name = '{$category['title']}'")))
+	if (($dbItem = get_category_by_outer_id($category['id']))/* || ($dbItem = $wpdb->get_row("SELECT * FROM {$wpdb->terms} WHERE name = '{$category['title']}'"))*/)
 	{
 		$termId = $dbItem->term_id;
-		//@todo: Нужно еще обрабатывать ситуацию, когда родительская категория еще не создана. Пока отложу, вероятность небольшая
 		wp_update_term($dbItem->term_id, 'ps_category', array(
-				'name'			=> $category['title'],
-				'parent'		=> $parentId,
-			));
+			'name'			=> $category['title'],
+			'parent'		=> $parentId,
+		));
 	}
 	else
 	{
-		$result = wp_insert_term($category['title'], 'ps_category', array('parent' => $parentId));
+		$result = wp_insert_term($category['title'], 'ps_category', array('parent' => $parentId, 'slug' => $category['title']));
 		if (is_array($result))
-			list($termId) = $result;
+			$termId = $result['term_id'];
 		elseif (is_object($result) && get_class($result) == 'WP_Error')
 		{
 			if (!empty($result->error_data['term_exists']))
 				$termId = $result->error_data['term_exists'];
 		}
-
 	}
 	if ($termId)
 		$wpdb->query("UPDATE {$wpdb->terms} SET term_group = {$category['id']} WHERE term_id = $termId");
+}
+
+/**
+ * Сброс кэша после вставки новых категорий
+ * @return void
+ */
+function flushCache($categories)
+{
+	delete_option("ps_category_children");
 }
 
 function importPost(array $item)
@@ -272,7 +279,7 @@ function showPost($content)
 		<td>
 		</td>
 		<td>
-			
+
 			<?php if (!is_single()):?>
 			<a href="<?php echo get_permalink($relatedItem->ID) ?>" title="<?php echo $relatedItem->post_title; ?>" style="display: block;">
 				<img src="<?php bloginfo('url'); ?>/wp-content/plugins/<?php echo basename(dirname(__FILE__)); ?>/img/details.png" alt="Подробнее" />
