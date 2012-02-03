@@ -96,7 +96,6 @@ function psActivate() {
 	update_option('ps_url', '');
 	update_option('ps_get_enable',1);
 	update_option('ps_access_code', md5(rand(1, 10000).rand(1, 1000).time()));
-	$wpdb->query("alter table {$wpdb->terms} change term_group term_group varchar(300);");
 }
 
 function psDeactivate() {
@@ -104,7 +103,6 @@ function psDeactivate() {
 	delete_option('ps_get_enable');
 	delete_option('ps_url');
 	delete_option('ps_access_code');
-	$wpdb->query("alter table {$wpdb->terms} change term_group term_group bigint;");
 }
 
 function psStyles()
