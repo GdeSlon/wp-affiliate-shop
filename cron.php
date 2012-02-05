@@ -40,7 +40,7 @@ if (!GdeSlonImport::checkCurl() && !GdeSlonImport::checkFileGetContentsCurl())
 {
 	die("Не найдено расширение php cUrl, а получение удаленного файла запрещено в настройках php.ini");
 }
-
+@unlink($path.'/archive.zip');
 $f = fopen($path.'/archive.zip', 'w');
 fwrite($f, GdeSlonImport::getFileFromUrl());
 fclose($f);
@@ -191,6 +191,7 @@ while (true) {
 //$wpdb->query("UPDATE ps_products SET status = 0 WHERE marked = 0");
 
 fclose($f);
+@unlink($path.'/'.$xmlfile);
 
 flushCache($cats);
 
