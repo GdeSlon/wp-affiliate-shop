@@ -26,6 +26,10 @@
 				<td><input name="ps_row_limit" id="ps_row_limit" type="text" value="<?php echo get_option('ps_row_limit'); ?>" class="regular-text" style="width: 100px;" /></td>
 			</tr>
 			<tr valign="top">
+				<th scope="row"><label for="widget_depth">Глубина вложенности виджета<br/><small>(0 — показывать всё, 1 - только родительские категории)</small></label></th>
+				<td><input name="widget_depth" id="widget_depth" type="text" value="<?php echo get_option('widget_depth'); ?>" class="regular-text" style="width: 100px;" /></td>
+			</tr>
+			<tr valign="top">
 				<th scope="row"><label for="ps_get_enable">Обновлять по GET-запросу</label></th>
 				<td><input name="ps_get_enable" id="ps_get_enable" type="checkbox" <?php if($get_enable) echo "checked='yes'"; ?> value="enable" /></td>
 			</tr>

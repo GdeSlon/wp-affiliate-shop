@@ -28,6 +28,7 @@ function psOptionsPage()
 		update_option('ps_page', $_POST['ps_page']);
 		update_option('ps_limit', $_POST['ps_limit']);
 		update_option('ps_row_limit', $_POST['ps_row_limit']);
+		update_option('widget_depth', $_POST['widget_depth']);
 		$isUpdated = TRUE;
 	}
 	if (isset($_POST['action'])&&($_POST['action'] == 'delete'))
@@ -94,12 +95,14 @@ function psAdminPage() {
 function psActivate() {
 	global $wpdb;
 	update_option('ps_url', '');
+	update_option('widget_depth', '0');
 	update_option('ps_get_enable',1);
 	update_option('ps_access_code', md5(rand(1, 10000).rand(1, 1000).time()));
 }
 
 function psDeactivate() {
 	global $wpdb;
+	delete_option('widget_depth');
 	delete_option('ps_get_enable');
 	delete_option('ps_url');
 	delete_option('ps_access_code');
