@@ -3,6 +3,7 @@ Contributors: gdeslon
 Donate link: http://gdeslon.ru/
 Tags: affiliate marketing, affiliate shop
 Requires at least: 3.0.1
+Tested up to: 3.3.1
 Stable tag: 1.1
 
 Affiliate shop plugin for Affiliate Network GdeSlon.ru
