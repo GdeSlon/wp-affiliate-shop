@@ -19,6 +19,7 @@ class GdeSlonWidget extends WP_Widget
 	{
 		extract($args);
 		$title = apply_filters('widget_title', $instance['title']);
+		$depth = empty($instance['depth']) ? 0 : intval($instance['depth']);
 		echo $before_widget;
 		//содержание функции psCategories
 		echo '<ul><li>', $before_title, ($title ? $title : 'Разделы каталога'), $after_title;
@@ -26,7 +27,7 @@ class GdeSlonWidget extends WP_Widget
 			'taxonomy'   => 'ps_category',
 			'title_li'   => '',
 			'hide_empty' => 0,
-			'depth'      => get_option('widget_depth'),
+			'depth'      => $depth,
 		));
 		echo '</li></ul>';
 		echo $after_widget;
@@ -41,6 +42,7 @@ class GdeSlonWidget extends WP_Widget
 	public function update($new_instance, $old_instance) {
 		$instance = $old_instance;
 		$instance['title'] = strip_tags($new_instance['title']);
+		$instance['depth'] = intval($new_instance['depth']);
 		return $instance;
 	}
 
@@ -52,14 +54,18 @@ class GdeSlonWidget extends WP_Widget
 	public function form($instance) {
 		if ($instance) {
 			$title = esc_attr($instance['title']);
+			$depth = $instance['depth'];
 		}
 		else {
 			$title = __('New title', 'text_domain');
+			$depth = 0;
 		}
 		?>
 	<p>
 		<label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label>
 		<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" />
+		<label for="<?php echo $this->get_field_id('depth'); ?>"><?php _e('Вложенность:'); ?></label>
+		<input class="widefat" id="<?php echo $this->get_field_id('depth'); ?>" name="<?php echo $this->get_field_name('depth'); ?>" type="text" value="<?php echo $depth; ?>" />
 	</p>
 	<?php
  	}
