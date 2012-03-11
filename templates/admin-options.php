@@ -33,6 +33,21 @@
 				<th scope="row"><label for="ps_get_enable">Обновлять по GET-запросу</label></th>
 				<td><input name="ps_get_enable" id="ps_get_enable" type="checkbox" <?php if($get_enable) echo "checked='yes'"; ?> value="enable" /></td>
 			</tr>
+			<tr>
+				<td scope="row" colspan="2"><label>Опции импорта</label></td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><label for="import_price">Загружать товары дороже чем</label></th>
+				<td><input name="import_price" id="import_price" type="text" value="<?php echo get_option('import_price'); ?>" class="regular-text" style="width: 100px;" /></td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><label for="import_title">Загружать только товары, содержащие подстроку в названии</label></th>
+				<td><input name="import_title" id="import_title" type="text" value="<?php echo get_option('import_title'); ?>" class="regular-text" style="width: 100px;" /></td>
+			</tr>
+			<tr valign="top">
+				<th scope="row"><label for="import_vendor">Загружать только товары указанного производителя</label></th>
+				<td><input name="import_vendor" id="import_vendor" type="text" value="<?php echo get_option('import_vendor'); ?>" class="regular-text" style="width: 100px;" /></td>
+			</tr>
 		</table>
 		<p class="submit">
 			<input type="submit" name="Submit" class="button-primary" value="<?php _e('Save Changes') ?>" />

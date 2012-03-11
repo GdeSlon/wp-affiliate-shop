@@ -63,8 +63,49 @@ class GdeSlonImport
 		return $file;
 	}
 
+	static public function parseParams($content)
+	{
+		preg_match_all('|\<param name="(.+)"\>(.+)\</param\>|', $content, $matches);
+		$params = array();
+		foreach($matches[1] as $key => $title)
+		{
+			$params[$title] = str_replace(']]>', '', str_replace('<![CDATA[', '', $matches[2][$key]));
+		}
+		$params['params_list'] = implode(',',$matches[1]);
+
+		preg_match('|\<vendor\>(.+)\</vendor\>|', $content, $matches);
+		$params['vendor'] = str_replace(']]>', '', str_replace('<![CDATA[', '', @$matches[1]));
+		return $params;
+	}
+
+	static public function filterImport($content)
+	{
+		$stateVendor = $stateTitle = $statePrice = TRUE;
+		if ($titleVendor = get_option('import_vendor'))
+		{
+			preg_match('|\<vendor\>(.+)\</vendor\>|', $content, $matches);
+			$vendor = @$matches[1];
+			$vendor = str_replace('<![CDATA[', '', $vendor);
+			$vendor = str_replace(']]>', '', $vendor);
+			if (strtolower($vendor) !== strtolower($titleVendor))
+				$stateVendor = FALSE;
+		}
+		if ($titleFilter = get_option('import_title'))
+		{
+			preg_match('|\<name\>(.+)\</name\>|', $content, $matches);
+			$title = @$matches[1];
+			$title = str_replace('<![CDATA[', '', $title);
+			$title = str_replace(']]>', '', $title);
+			if (stripos($title, $titleFilter) === FALSE)
+				$stateTitle = FALSE;
+		}
+		if ($priceFilter = get_option('import_price'))
+		{
+			preg_match('|\<price\>(.+)\</price\>|', $content, $matches);
+			$price = @$matches[1];
+			if (floatval($priceFilter) > floatval($price))
+				$statePrice = FALSE;
+		}
+		return ($stateTitle && $statePrice && $stateVendor);
+	}
 }
-
-
-
-?>

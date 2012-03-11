@@ -29,6 +29,9 @@ function psOptionsPage()
 		update_option('ps_limit', $_POST['ps_limit']);
 		update_option('ps_row_limit', $_POST['ps_row_limit']);
 		update_option('widget_depth', $_POST['widget_depth']);
+		update_option('import_price', $_POST['import_price']);
+		update_option('import_title', $_POST['import_title']);
+		update_option('import_vendor', $_POST['import_vendor']);
 		$isUpdated = TRUE;
 	}
 	if (isset($_POST['action'])&&($_POST['action'] == 'delete'))
@@ -98,6 +101,10 @@ function psActivate() {
 	update_option('widget_depth', '0');
 	update_option('ps_get_enable',1);
 	update_option('ps_access_code', md5(rand(1, 10000).rand(1, 1000).time()));
+	update_option('import_price', '');
+	update_option('import_title', '');
+	update_option('import_vendor', '');
+
 }
 
 function psDeactivate() {
@@ -106,6 +113,9 @@ function psDeactivate() {
 	delete_option('ps_get_enable');
 	delete_option('ps_url');
 	delete_option('ps_access_code');
+	delete_option('import_price');
+	delete_option('import_title');
+	delete_option('import_vendor');
 }
 
 function psStyles()

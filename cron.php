@@ -45,9 +45,17 @@ $f = fopen($path.'/archive.zip', 'w');
 fwrite($f, GdeSlonImport::getFileFromUrl());
 fclose($f);
 
+/* Удаление старых xml-файлов */
+$dh = opendir($path);
+while ($file = readdir($dh)) {
+	if (strpos($file, '.xml') !== false) {
+		@unlink($path.'/'.$file);
+		break;
+	}
+}
+closedir($dh);
 
 /* Распаковка архива */
-
 $zip = new PclZip($path.'/archive.zip');
 $zip->extract(PCLZIP_OPT_PATH, $path);
 
@@ -137,10 +145,15 @@ while (true) {
 	$content = loadFilePart($f, '</offer>');
 	$psp = mb_strpos($content, '<offer ', 0, 'utf-8');
 	$pep = mb_strpos($content, '</offer>', 0, 'utf-8');
-	if ($psp !== false && $pep !== false) {
+
+	if ($psp !== false && $pep !== false)
+	{
 		$product = mb_substr($content, $psp + mb_strlen('<offer ', 'utf-8'), $pep - $psp - mb_strlen('<offer ', 'utf-8'), 'utf-8');
 
 		$matches = array();
+
+		if (!GdeSlonImport::filterImport($product))
+			continue;
 
 		preg_match('/ id="(\d+)"/', $product, $matches);
 		$id = @$matches[1];
@@ -184,7 +197,7 @@ while (true) {
 			'currency'		=> $currency,
 			'image'			=> $image,
 			'category_id'	=> $categoryId,
-		));
+		), GdeSlonImport::parseParams($product));
 		unset($content);
 	} else { break; }
 }

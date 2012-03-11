@@ -13,7 +13,8 @@ function registerGdeSlonPostType()
 			'editor',
 			'page-attributes',
 			'thumbnail',
-			'excerpt'
+			'excerpt',
+			'custom-fields'
 		),
 		'labels'	=> array(
 			'name' => 'Каталог',
@@ -42,6 +43,7 @@ function registerGdeSlonPostType()
 			'rewrite' => array( 'slug' => 'type' )
 		)
 	);
+	flush_rewrite_rules(false);
 
 	function filter_where($where = '')
 	{
@@ -102,7 +104,12 @@ function flushCache($categories)
 	delete_option("ps_category_children");
 }
 
-function importPost(array $item)
+function addParamsToPost($postId, $params)
+{
+
+}
+
+function importPost(array $item, $params = NULL)
 {
 	global $wpdb;
 	$obItem = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE post_mime_type = {$item['id']}");
@@ -147,6 +154,10 @@ function importPost(array $item)
 		add_post_meta($postId, '_wp_page_template', 'sidebar-page.php', TRUE);
 	}
 	wp_set_object_terms($postId, array(intval(get_category_by_outer_id($item['category_id'])->term_id)), 'ps_category');
+	foreach($params as $name => $value)
+	{
+		update_post_meta($postId, $name, $value);
+	}
 }
 
 function get_category_by_outer_id($outerId)
@@ -267,6 +278,18 @@ function showPost($content)
 		<td style="vertical-align: top;">
 			<div class="products-description">
 				<p><?php echo html_entity_decode(nl2br($content)); ?></p>
+				<table>
+					<tr>
+						<th>Производитель</th>
+						<td><?php echo get_post_meta($post->ID, 'vendor', TRUE)?></td>
+					</tr>
+					<?php foreach(explode(',',get_post_meta($post->ID, 'params_list', TRUE)) as $paramKey):?>
+					<tr>
+						<th><?php echo $paramKey?></th>
+						<td><?php echo get_post_meta($post->ID, $paramKey, TRUE)?></td>
+					</tr>
+					<?php endforeach?>
+				</table>
 			</div>
 		</td>
 	</tr>
