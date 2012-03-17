@@ -78,11 +78,15 @@ function importTerm(array $category)
 		wp_update_term($dbItem->term_id, 'ps_category', array(
 			'name'			=> $category['title'],
 			'parent'		=> $parentId,
+			'slug'			=> transliteration($category['title'])
 		));
 	}
 	else
 	{
-		$result = wp_insert_term($category['title'], 'ps_category', array('parent' => $parentId, 'slug' => $category['title']));
+		$result = wp_insert_term($category['title'], 'ps_category', array(
+			'parent'	=> $parentId,
+			'slug'		=> transliteration($category['title'])
+		));
 		if (is_array($result))
 			$termId = $result['term_id'];
 		elseif (is_object($result) && get_class($result) == 'WP_Error')
@@ -109,6 +113,32 @@ function addParamsToPost($postId, $params)
 
 }
 
+function transliteration($str)
+{
+	$r_trans = Array(
+		"А","Б","В","Г","Д","Е","Ё","Ж","З","И","Й","К","Л","М",
+		"Н","О","П","Р","С","Т","У","Ф","Х","Ц","Ч","Ш","Щ","Э",
+		"Ю","Я","Ъ","Ы","Ь",
+		"а","б","в","г","д","е","ё","ж","з","и","й","к","л","м",
+		"н","о","п","р","с","т","у","ф","х","ц","ч","ш","щ","э",
+		"ю","я","ъ","ы","ь"," ",",","-","(",")",".","?","!",":","\"","'","=","\\","/");
+
+	$e_trans = Array(
+		"a","b","v","g","d","e","e","j","z","i","i","k","l","m",
+		"n","o","p","r","s","t","u","f","h","cz","ch","sh","sch",
+		"e","yu","ya","","i","",
+		"a","b","v","g","d","e","e","j","z","i","i","k","l","m",
+		"n","o","p","r","s","t","u","f","h","c","ch","sh","sch",
+		"e","yu","ya","","i","","-","-","-","-","-","-","","","-","","","","","");
+
+	$str = strtolower( str_replace($r_trans, $e_trans, $str) );
+	$str = preg_replace('~([\-]+)~','-',$str);
+
+	$str = preg_replace('~([^a-z0-9\-])~','',$str);
+	return $str;
+}
+
+
 function importPost(array $item, $params = NULL)
 {
 	global $wpdb;
@@ -124,13 +154,14 @@ function importPost(array $item, $params = NULL)
 			$item['description'] = $obItem->post_content;
 		}
 		wp_update_post(array(
-				'ID'				=> $obItem->ID,
-				'post_title'		=> $item['title'],
-				'post_content'		=> $item['description'],
-				'post_type'			=> 'ps_catalog',
-				'post_status'		=> 'publish',
-				'post_mime_type'	=> $item['id']
-			));
+			'ID'				=> $obItem->ID,
+			'post_title'		=> $item['title'],
+			'post_content'		=> $item['description'],
+			'post_type'			=> 'ps_catalog',
+			'post_status'		=> 'publish',
+			'post_mime_type'	=> $item['id'],
+			'post_name'			=> transliteration($item['title'])
+		));
 		foreach(array('url', 'price', 'currency', 'image', 'bestseller') as $var)
 		{
 			update_post_meta($obItem->ID, $var, $item[$var], get_post_meta($obItem->ID, $var, TRUE));
@@ -140,13 +171,14 @@ function importPost(array $item, $params = NULL)
 	else
 	{
 		$postId = wp_insert_post(array(
-				'post_title'		=> $item['title'],
-				'post_content'		=> $item['description'],
-				'post_type'			=> 'ps_catalog',
-				'post_status'		=> 'publish',
-				'post_mime_type'	=> $item['id'],
-				'comment_status'	=> 'closed'
-			));
+			'post_title'		=> $item['title'],
+			'post_content'		=> $item['description'],
+			'post_type'			=> 'ps_catalog',
+			'post_status'		=> 'publish',
+			'post_mime_type'	=> $item['id'],
+			'comment_status'	=> 'closed',
+			'post_name'			=> transliteration($item['title'])
+		));
 		foreach(array('url', 'price', 'currency', 'image', 'bestseller') as $var)
 		{
 			add_post_meta($postId, $var, $item[$var], TRUE);
@@ -268,7 +300,7 @@ function showPost($content)
 			<?php if (!is_single()):?>
 			<a href="<?php echo get_permalink($relatedItem->ID) ?>" title="<?php echo $relatedItem->post_title; ?>" style="display: block;">
 			<?php endif?>
-				<img src="<?php echo get_post_meta($post->ID, 'image', TRUE)?>" title="Купить <?php echo $post->post_title; ?>" alt="Купить <?php echo $post->post_title; ?>" style="width: 250px;" />
+			<img src="<?php echo get_post_meta($post->ID, 'image', TRUE)?>" title="Купить <?php echo $post->post_title; ?>" alt="Купить <?php echo $post->post_title; ?>" style="width: 250px;" />
 			<?php if (!is_single()):?>
 			</a>
 			<?php endif?>
@@ -316,7 +348,7 @@ function showPost($content)
 <table class="products-list">
 	<tr>
 		<?php
-  		$termsList = wp_get_post_terms($post->ID, 'ps_category');
+		$termsList = wp_get_post_terms($post->ID, 'ps_category');
 		$args = array(
 			'numberposts'	=> get_option('ps_row_limit'),
 			'orderby'		=> 'rand',
@@ -351,8 +383,8 @@ function showPost($content)
 	</tr>
 </table>
 
-		<?php
-    	$products = $wpdb->get_results("SELECT * FROM ps_products WHERE status = 1 AND bestseller = 1 ORDER BY RAND() LIMIT ".get_option('ps_row_limit'));
+<?php
+	$products = $wpdb->get_results("SELECT * FROM ps_products WHERE status = 1 AND bestseller = 1 ORDER BY RAND() LIMIT ".get_option('ps_row_limit'));
 	?>
 <?php if (!empty($products)) { ?>
 	<h3>Бестселлеры</h3>
