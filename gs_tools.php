@@ -74,7 +74,9 @@ class GdeSlonImport
 		$params['params_list'] = implode(',',$matches[1]);
 
 		preg_match('|\<vendor\>(.+)\</vendor\>|', $content, $matches);
-		$params['vendor'] = str_replace(']]>', '', str_replace('<![CDATA[', '', @$matches[1]));
+		$params['vendor'] = '';
+		if (!empty($matches[1]))
+			$params['vendor'] = str_replace(']]>', '', str_replace('<![CDATA[', '', @$matches[1]));
 		return $params;
 	}
 
