@@ -44,7 +44,10 @@ if (!GdeSlonImport::checkCurl() && !GdeSlonImport::checkFileGetContentsCurl())
 $f = fopen($path.'/archive.zip', 'w');
 fwrite($f, GdeSlonImport::getFileFromUrl());
 fclose($f);
-
+if (stripos(mime_content_type($path.'/archive.zip'), 'zip') === FALSE)
+{
+	die("По указанному пути не найден ZIP-файл. Проверьте правильность введённой ссылки");
+}
 /* Удаление старых xml-файлов */
 $dh = opendir($path);
 while ($file = readdir($dh)) {
@@ -57,7 +60,10 @@ closedir($dh);
 
 /* Распаковка архива */
 $zip = new PclZip($path.'/archive.zip');
-$zip->extract(PCLZIP_OPT_PATH, $path);
+if ($status = $zip->extract(PCLZIP_OPT_PATH, $path) === 0)
+{
+	die('Ошибка при распаковке архива. Данные об ошибке PclZip — Code: '.$zip->error_code.'; Message: '.$zip->error_string);
+}
 
 $xmlfile = '';
 $dh = opendir($path);
@@ -68,7 +74,6 @@ while ($file = readdir($dh)) {
 	}
 }
 closedir($dh);
-
 
 if (empty($xmlfile)) {
 	echo 'Не удалось получить выгрузку.';

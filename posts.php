@@ -158,7 +158,7 @@ function importPost(array $item, $params = NULL)
 			'post_title'		=> $item['title'],
 			'post_content'		=> $item['description'],
 			'post_type'			=> 'ps_catalog',
-			'post_status'		=> 'publish',
+			//'post_status'		=> 'publish',
 			'post_mime_type'	=> $item['id'],
 			'post_name'			=> transliteration($item['title'])
 		));
@@ -311,16 +311,20 @@ function showPost($content)
 			<div class="products-description">
 				<p><?php echo html_entity_decode(nl2br($content)); ?></p>
 				<table>
+					<?php if (get_post_meta($post->ID, 'vendor', TRUE)):?>
 					<tr>
 						<th>Производитель</th>
 						<td><?php echo get_post_meta($post->ID, 'vendor', TRUE)?></td>
 					</tr>
+					<?php endif?>
+					<?php if (get_post_meta($post->ID, 'params_list', TRUE)):?>
 					<?php foreach(explode(',',get_post_meta($post->ID, 'params_list', TRUE)) as $paramKey):?>
 					<tr>
 						<th><?php echo $paramKey?></th>
 						<td><?php echo get_post_meta($post->ID, $paramKey, TRUE)?></td>
 					</tr>
 					<?php endforeach?>
+					<?php endif?>
 				</table>
 			</div>
 		</td>
