@@ -30,6 +30,7 @@ function registerGdeSlonPostType()
 		),
 		'show_in_nav_menus'=> false,
 	);
+
 	register_post_type('ps_catalog', $postTypeConfig);
 	register_taxonomy(
 		'ps_category',
@@ -54,6 +55,18 @@ function registerGdeSlonPostType()
 		return str_replace("post_type IN ('post',", "post_type IN ('post','ps_catalog',", $where);
 	}
 	add_filter('posts_where', 'filter_where', 9999);
+}
+
+/**
+ * Помечаем товар, как отредактированный вручную
+ */
+add_action('edit_post', 'markAsEdited');
+function markAsEdited($post)
+{
+	if (defined('PARSING_IS_RUNNING'))
+		return;
+	$post = is_object($post) ? $post : get_post($post);
+	update_post_meta($post->ID,'edited_by_user', 1, get_post_meta($post->ID, 'edited_by_user', TRUE));
 }
 
 /**
@@ -153,7 +166,7 @@ function importPost(array $item, $params = NULL)
 			$item['title'] = $obItem->post_title;
 			$item['description'] = $obItem->post_content;
 		}
-		wp_update_post(array(
+		$params = array(
 			'ID'				=> $obItem->ID,
 			'post_title'		=> $item['title'],
 			'post_content'		=> $item['description'],
@@ -161,7 +174,14 @@ function importPost(array $item, $params = NULL)
 			//'post_status'		=> 'publish',
 			'post_mime_type'	=> $item['id'],
 			'post_name'			=> transliteration($item['title'])
-		));
+		);
+		if (get_post_meta($obItem->ID, 'edited_by_user', TRUE))
+		{
+			unset($params['post_title']);
+			unset($params['post_content']);
+			unset($params['post_name']);
+		}
+		wp_update_post($params);
 		foreach(array('url', 'price', 'currency', 'image', 'bestseller') as $var)
 		{
 			update_post_meta($obItem->ID, $var, $item[$var], get_post_meta($obItem->ID, $var, TRUE));

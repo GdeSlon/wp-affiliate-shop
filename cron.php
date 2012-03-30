@@ -1,5 +1,6 @@
 <?php
 header('Content-type: text/html; charset=utf-8');
+define('PARSING_IS_RUNNING', TRUE);
 ignore_user_abort(true);
 set_time_limit(36000);
 define('DOING_CRON', true);
