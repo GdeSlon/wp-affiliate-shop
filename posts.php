@@ -158,7 +158,7 @@ function importPost(array $item, $params = NULL)
 			'post_title'		=> $item['title'],
 			'post_content'		=> $item['description'],
 			'post_type'			=> 'ps_catalog',
-			'post_status'		=> 'publish',
+			//'post_status'		=> 'publish',
 			'post_mime_type'	=> $item['id'],
 			'post_name'			=> transliteration($item['title'])
 		));
