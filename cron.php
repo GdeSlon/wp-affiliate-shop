@@ -45,7 +45,7 @@ if (!GdeSlonImport::checkCurl() && !GdeSlonImport::checkFileGetContentsCurl())
 $f = fopen($path.'/archive.zip', 'w');
 fwrite($f, GdeSlonImport::getFileFromUrl());
 fclose($f);
-if (stripos(mime_content_type($path.'/archive.zip'), 'zip') === FALSE)
+if (GdeSlonImport::checkMimeType($path.'/archive.zip'))
 {
 	die("По указанному пути не найден ZIP-файл. Проверьте правильность введённой ссылки");
 }

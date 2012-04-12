@@ -40,6 +40,20 @@ class GdeSlonImport
 		return ini_get('allow_url_fopen');
 	}
 
+	static public function checkMimeType($file)
+	{
+		if (function_exists('mime_content_type') && !strnatcmp(phpversion(),'5.0'))
+		{
+			$mimeType = mime_content_type($file);
+		}
+		else
+		{
+			$obFinfo = new finfo();
+			$mimeType = $obFinfo->file($file, FILEINFO_MIME_TYPE);
+		}
+		return !stripos($mimeType, 'zip') !== FALSE;
+	}
+
 	static public function getFileFromUrl()
 	{
 		$url = get_option('ps_url');
