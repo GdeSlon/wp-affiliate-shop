@@ -35,6 +35,7 @@ class GdeSlonImport
 		return function_exists('curl_init');
 	}
 
+
 	static public function checkFileGetContentsCurl()
 	{
 		return ini_get('allow_url_fopen');
@@ -46,10 +47,15 @@ class GdeSlonImport
 		{
 			$mimeType = mime_content_type($file);
 		}
-		else
+		elseif (class_exists('finfo'))
 		{
 			$obFinfo = new finfo();
 			$mimeType = $obFinfo->file($file, FILEINFO_MIME_TYPE);
+		}
+		else
+		{
+			//Если в системе нет ни mimt_content_type ни finfo расширения, то мы никак не можем проверить файл. Пропускаем проверку.
+			return FALSE;
 		}
 		return !stripos($mimeType, 'zip') !== FALSE;
 	}
