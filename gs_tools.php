@@ -41,15 +41,23 @@ class GdeSlonImport
 		return ini_get('allow_url_fopen');
 	}
 
+	/**
+	 * Проверка mime-типа файла. Добавлена для того, чтобы избежать проблем со скачанной html-страницей.
+	 * Если возвращает TRUE — значит проблема имеет место.
+	 * @static
+	 * @param string $file Путь к загруженному файлу.
+	 * @return bool
+	 */
 	static public function checkMimeType($file)
 	{
-		if (function_exists('mime_content_type') && !strnatcmp(phpversion(),'5.0'))
-		{
-			$mimeType = mime_content_type($file);
-		}
-		elseif (class_exists('finfo'))
+		if (class_exists('finfo'))
 		{
 			$obFinfo = new finfo();
+			//Предотвращение ошибки в ранних версиях php до 5.2
+			if (!defined('FILEINFO_MIME_TYPE'))
+			{
+				define('FILEINFO_MIME_TYPE', 16);
+			}
 			$mimeType = $obFinfo->file($file, FILEINFO_MIME_TYPE);
 		}
 		else
@@ -57,7 +65,7 @@ class GdeSlonImport
 			//Если в системе нет ни mimt_content_type ни finfo расширения, то мы никак не можем проверить файл. Пропускаем проверку.
 			return FALSE;
 		}
-		return !stripos($mimeType, 'zip') !== FALSE;
+		return !(stripos($mimeType, 'zip') !== FALSE);
 	}
 
 	static public function getFileFromUrl()
