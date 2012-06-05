@@ -182,11 +182,12 @@ function importPost(array $item, $params = NULL)
 			unset($params['post_name']);
 		}
 		wp_update_post($params);
-		foreach(array('url', 'price', 'currency', 'image', 'bestseller') as $var)
+		foreach(array('url', 'price', 'currency', 'bestseller') as $var)
 		{
 			update_post_meta($obItem->ID, $var, $item[$var], get_post_meta($obItem->ID, $var, TRUE));
 		}
 		$postId = $obItem->ID;
+
 	}
 	else
 	{
@@ -199,17 +200,80 @@ function importPost(array $item, $params = NULL)
 			'comment_status'	=> 'closed',
 			'post_name'			=> transliteration($item['title'])
 		));
-		foreach(array('url', 'price', 'currency', 'image', 'bestseller') as $var)
+		foreach(array('url', 'price', 'currency', 'bestseller') as $var)
 		{
 			add_post_meta($postId, $var, $item[$var], TRUE);
 		}
 		add_post_meta($postId, '_wp_page_template', 'sidebar-page.php', TRUE);
+	}
+	/**
+	 * Подгрузка изображения
+	 */
+	if (!empty($item['image']))
+	{
+		download_image($item['image'], $postId);
 	}
 	wp_set_object_terms($postId, array(intval(get_category_by_outer_id($item['category_id'])->term_id)), 'ps_category');
 	foreach($params as $name => $value)
 	{
 		update_post_meta($postId, $name, $value);
 	}
+}
+
+/**
+ * Подгрузка изображения
+ * @param $url
+ * @param $postId
+ * @todo добавить обходной вариант на тот случай, если загрузка не удалась — просто запоминать урл на картинку
+ * @todo Вынести наконец всё в красивый класс и закончить рефакторинг — запланировано на 7.06.2012
+ */
+function download_image($url, $postId)
+{
+	if (!GdeSlonImport::checkCurl())
+	{
+		$opts = array(
+			'http'=>array(
+				'method'=>"GET",
+				'header'=>"Accept-language: en\r\n"
+			)
+		);
+		$context = stream_context_create($opts);
+		$fileContents = file_get_contents($url, false, $context);
+	}
+	else
+	{
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_HEADER, false);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$fileContents = curl_exec($ch);
+		curl_close($ch);
+	}
+
+	$localFilepath = dirname(__FILE__).'/downloads/'.basename($url);
+	$f = fopen($localFilepath, 'w');
+	fwrite($f, $fileContents);
+	fclose($f);
+	insert_attachment($localFilepath,$postId, true);
+	@unlink($localFilepath);
+}
+function insert_attachment($image, $post_id, $setthumb = FALSE)
+{
+	require_once(ABSPATH . "wp-admin" . '/includes/image.php');
+	require_once(ABSPATH . "wp-admin" . '/includes/file.php');
+	require_once(ABSPATH . "wp-admin" . '/includes/media.php');
+
+	$array = array( //array to mimic $_FILES
+		'name' => basename($image), //isolates and outputs the file name from its absolute path
+		'type' => 'image/jpeg', //yes, thats sloppy, see my text further down on this topic
+		'tmp_name' => $image, //this field passes the actual path to the image
+		'error' => 0, //normally, this is used to store an error, should the upload fail. but since this isnt actually an instance of $_FILES we can default it to zero here
+		'size' => filesize($image) //returns image filesize in bytes
+	);
+	$imageId = media_handle_sideload($array, $post_id);
+	if ($setthumb)
+		update_post_meta($post_id,'_thumbnail_id',$imageId);
+	return $imageId;
 }
 
 function get_category_by_outer_id($outerId)
@@ -288,17 +352,20 @@ function showBreadCrumbs($content)
 
 		} elseif ( is_single() && !is_attachment() ) {
 			$cat = get_the_terms($post->ID, 'ps_category');
-			foreach($cat as $obCat)
+			if (is_array($cat))
 			{
-				$cat = $obCat;
-				break;
-			}
-			$taxonomies = ps_get_taxonomy_parents($cat->parent);
-			$taxonomies[] = $cat;
-			foreach($taxonomies as $obTerm)
-			{
-				if (get_class($obTerm) !== 'WP_Error')
-					echo ' '.$delimiter.' <a href="' .get_category_link($obTerm).'" title="' . esc_attr( sprintf( __( "Посмотреть все товары в категории %s" ), $obTerm->name ) ) . '">'.$obTerm->name.'</a>';
+				foreach($cat as $obCat)
+				{
+					$cat = $obCat;
+					break;
+				}
+				$taxonomies = ps_get_taxonomy_parents($cat->parent);
+				$taxonomies[] = $cat;
+				foreach($taxonomies as $obTerm)
+				{
+					if (get_class($obTerm) !== 'WP_Error')
+						echo ' '.$delimiter.' <a href="' .get_category_link($obTerm).'" title="' . esc_attr( sprintf( __( "Посмотреть все товары в категории %s" ), $obTerm->name ) ) . '">'.$obTerm->name.'</a>';
+				}
 			}
 			echo ' '.$delimiter.' ';
 			echo $before . get_the_title() . $after;
@@ -320,7 +387,7 @@ function showPost($content)
 			<?php if (!is_single()):?>
 			<a href="<?php echo get_permalink($relatedItem->ID) ?>" title="<?php echo $relatedItem->post_title; ?>" style="display: block;">
 			<?php endif?>
-			<img src="<?php echo get_post_meta($post->ID, 'image', TRUE)?>" title="Купить <?php echo $post->post_title; ?>" alt="Купить <?php echo $post->post_title; ?>" style="width: 250px;" />
+			<?php get_image_from_catalog_item($relatedItem)?>
 			<?php if (!is_single()):?>
 			</a>
 			<?php endif?>
@@ -339,11 +406,11 @@ function showPost($content)
 					<?php endif?>
 					<?php if (get_post_meta($post->ID, 'params_list', TRUE)):?>
 					<?php foreach(explode(',',get_post_meta($post->ID, 'params_list', TRUE)) as $paramKey):?>
-					<tr>
-						<th><?php echo $paramKey?></th>
-						<td><?php echo get_post_meta($post->ID, $paramKey, TRUE)?></td>
-					</tr>
-					<?php endforeach?>
+						<tr>
+							<th><?php echo $paramKey?></th>
+							<td><?php echo get_post_meta($post->ID, $paramKey, TRUE)?></td>
+						</tr>
+						<?php endforeach?>
 					<?php endif?>
 				</table>
 			</div>
@@ -398,7 +465,7 @@ function showPost($content)
 		?>
 		<?php foreach (get_posts($args) as $relatedItem):?>
 		<td style="text-align: left;">
-			<div class="products-image"><a href="<?php echo get_permalink($relatedItem->ID)?>" title="<?php echo $relatedItem->post_title; ?>"><img src="<?php echo get_post_meta($relatedItem->ID, 'image', TRUE)?>" style="width: 100px; " /></a></div>
+			<div class="products-image"><a href="<?php echo get_permalink($relatedItem->ID)?>" title="<?php echo $relatedItem->post_title; ?>"><?php get_image_from_catalog_item($relatedItem->ID,100)?></a></div>
 			<p class="products-name"><?php echo $relatedItem->post_title; ?></p>
 			<p class="products-price"><?php echo get_post_meta($relatedItem->ID, 'price', TRUE); ?> <?php echo (get_post_meta($relatedItem->ID, 'currency', TRUE) == 'RUR' ? 'руб.' : get_post_meta($relatedItem->ID, 'currency', TRUE)); ?></p>
 			<p class="products-details"><a href="<?php echo get_permalink($relatedItem->ID) ?>" title="<?php echo $relatedItem->post_title; ?>"><img src="<?php bloginfo('url'); ?>/wp-content/plugins/<?php echo basename(dirname(__FILE__)); ?>/img/details.png" alt="Подробнее" /></a></p>
@@ -416,7 +483,7 @@ function showPost($content)
 		<tr>
 			<?php foreach ($products as $item) { $relatedItem = getPostByItem($item)?>
 			<td style="text-align: left;">
-				<div class="products-image"><a href="<?php echo get_permalink($relatedItem->ID)?>" title="<?php echo $relatedItem->post_title; ?>"><img src="<?php echo get_post_meta($relatedItem->ID, 'image', TRUE)?>" style="width: 100px; height: 100px;" /></a></div>
+				<div class="products-image"><a href="<?php echo get_permalink($relatedItem->ID)?>" title="<?php echo $relatedItem->post_title; ?>"><?php echo get_image_from_catalog_item($relatedItem, 100)?></a></div>
 				<p class="products-name"><?php echo $relatedItem->post_title; ?></p>
 				<p class="products-price"><?php echo get_post_meta($relatedItem->ID, 'price', TRUE); ?> <?php echo (get_post_meta($relatedItem->ID, 'currency', TRUE) == 'RUR' ? 'руб.' : get_post_meta($relatedItem->ID, 'currency', TRUE)); ?></p>
 				<p class="products-details"><a href="<?php echo get_permalink($relatedItem->ID) ?>" title="<?php echo $relatedItem->post_title; ?>"><img src="<?php bloginfo('url'); ?>/wp-content/plugins/<?php echo basename(dirname(__FILE__)); ?>/img/details.png" alt="Подробнее" /></a></p>
@@ -437,4 +504,18 @@ function getItemByPost($obPost)
 {
 	global $wpdb;
 	return $wpdb->get_row("SELECT * FROM ps_products WHERE post_id = '{$obPost->ID}'");
+}
+
+/**
+ * Вывод изображения
+ * @param $post
+ * @param int $width
+ */
+function get_image_from_catalog_item($post, $width = 250)
+{
+	$post = is_object($post) ? $post : get_post($post);
+	$url = has_post_thumbnail($post->ID)
+			? wp_get_attachment_url(get_post_thumbnail_id($post->ID)) : get_post_meta($post->ID, 'image', TRUE);
+	echo '<img src="'.$url.'" title="Купить '.$post->post_title.'" alt="Купить '.$post->post_title.'" style="width: '.$width .'px;" />';
+
 }
