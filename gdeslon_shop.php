@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: GdeSlon Affiliate Shop
-Version: 1.3.2
+Version: 1.3.3
 Author: GdeSlon
 */
 require('gs_tools.php');
