@@ -70,8 +70,8 @@ class GdeSlonWidget extends WP_Widget
 	<?php
  	}
 }
-add_action('widgets_init', 'registerWindget');
-function registerWindget()
+add_action('widgets_init', 'registerWidget');
+function registerWidget()
 {
 	register_widget("GdeSlonWidget");
 }

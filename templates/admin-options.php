@@ -35,7 +35,16 @@
 			</tr>
 
 			<tr>
-				<td scope="row" colspan="2"><h3>Опции импорта</h3></td>
+				<td scope="row" colspan="2">
+					<h3>Опции импорта</h3>
+					<?php if (!is_upload_directory_writeable()):?>
+					<p style="color:red;">
+						Внимание! Нет доступа на запись к директории <?php echo get_upload_path()?>.<br/>
+						Вам необходимо дать права на запись в эту директорию. <br/>
+						Если вы не знаете, что это значит — обратитесь за помощью к тех.поддержке вашего хостинга.
+						</p>
+					<?php endif?>
+				</td>
 			</tr>
 			<tr valign="top" style="border-top: 1px solid #aaa;border-left: 1px solid #aaa;border-right: 1px solid #aaa;">
 				<th scope="row"><label for="import_price">Загружать товары дороже чем</label></th>

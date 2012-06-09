@@ -139,3 +139,22 @@ class GdeSlonImport
 		return ($stateTitle && $statePrice && $stateVendor);
 	}
 }
+
+/**
+ * Получение серверного пути к директории загрузки файлов
+ * @return mixed
+ */
+function get_upload_path()
+{
+	$dirData = wp_upload_dir();
+	return $dirData['path'];
+}
+
+/**
+ * Проверка на возможность записи в директорию аплоада
+ * @return bool
+ */
+function is_upload_directory_writeable()
+{
+	return is_writable(get_upload_path());
+}

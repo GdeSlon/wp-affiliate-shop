@@ -254,8 +254,15 @@ function download_image($url, $postId)
 	$f = fopen($localFilepath, 'w');
 	fwrite($f, $fileContents);
 	fclose($f);
-	insert_attachment($localFilepath,$postId, true);
+	$state = insert_attachment($localFilepath,$postId, true);
+	if (is_wp_error($state))
+	{
+		echo 'При попытке загрузить файл '.$url.' возникла ошибка: '.$state->get_error_message().
+				". Файл был присоединён старым способом\n\r";
+		add_post_meta($postId, 'image', $url, TRUE);
+	}
 	@unlink($localFilepath);
+
 }
 function insert_attachment($image, $post_id, $setthumb = FALSE)
 {
