@@ -25,6 +25,7 @@ function psOptionsPage()
 	if (isset($_POST['action'])&&($_POST['action'] == 'update')){
 		update_option('ps_get_enable', isset($_POST['ps_get_enable']) ? '1' : '0');
 		update_option('ps_url', $_POST['ps_url']);
+		update_option('ps_download_images', isset($_POST['ps_download_images']) ? '1' : '0');
 		update_option('ps_page', $_POST['ps_page']);
 		update_option('ps_limit', $_POST['ps_limit']);
 		update_option('ps_row_limit', $_POST['ps_row_limit']);
@@ -104,6 +105,7 @@ function psActivate() {
 	update_option('import_price', '');
 	update_option('import_title', '');
 	update_option('import_vendor', '');
+	update_option('ps_download_images', 0);
 
 }
 

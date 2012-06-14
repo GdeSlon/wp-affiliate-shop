@@ -17,10 +17,10 @@
 				<th scope="row" style="width:300px"><label for="ps_url">Ссылка на выгрузку</label></th>
 				<td><input name="ps_url" id="ps_url" type="text" value="<?php echo $url; ?>" class="regular-text" style="width: 550px;" /></td>
 			</tr>
-<!--			<tr valign="top">-->
-<!--				<th scope="row"><label for="ps_limit">Кол-во товаров на странице</label></th>-->
-<!--				<td><input name="ps_limit" id="ps_limit" type="text" value="--><?php //echo get_option('ps_limit'); ?><!--" class="regular-text" style="width: 100px;" /></td>-->
-<!--			</tr>-->
+			<tr valign="top">
+				<th scope="row"><label for="ps_download_images">Загружать изображения к себе в WordPress</label></th>
+				<td><input name="ps_download_images" id="ps_download_images" type="checkbox" value="1" <?php if (get_option('ps_download_images')) echo ' checked="checked" '; ?>/></td>
+			</tr>
 			<tr valign="top">
 				<th scope="row"><label for="ps_row_limit">Кол-во товаров в строке</label></th>
 				<td><input name="ps_row_limit" id="ps_row_limit" type="text" value="<?php echo get_option('ps_row_limit'); ?>" class="regular-text" style="width: 100px;" /></td>

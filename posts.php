@@ -229,6 +229,12 @@ function importPost(array $item, $params = NULL)
  */
 function download_image($url, $postId)
 {
+	if (!get_option('ps_download_images'))
+	{
+		$currentValue = get_post_meta($postId, 'image', TRUE);
+		update_post_meta($postId, 'image', $url, $currentValue);
+		return;
+	}
 	if (!GdeSlonImport::checkCurl())
 	{
 		$opts = array(
@@ -254,15 +260,35 @@ function download_image($url, $postId)
 	$f = fopen($localFilepath, 'w');
 	fwrite($f, $fileContents);
 	fclose($f);
+	/**
+	 * Удаление не пользовательских аттачментов
+	 */
+	foreach(get_children(array(
+			'post_parent' => $postId,
+			'post_status' => 'inherit',
+			'post_type' => 'attachment',
+			'post_mime_type' => 'image',
+			'numberposts' => -1,
+		)) as $attachment)
+	{
+		if (get_post_meta($attachment->ID, 'is_image_from_gdeslon', TRUE))
+		{
+			wp_delete_attachment($attachment->ID, TRUE);
+		}
+	}
 	$state = insert_attachment($localFilepath,$postId, true);
 	if (is_wp_error($state))
 	{
 		echo 'При попытке загрузить файл '.$url.' возникла ошибка: '.$state->get_error_message().
 				". Файл был присоединён старым способом\n\r";
-		add_post_meta($postId, 'image', $url, TRUE);
+		$currentValue = get_post_meta($postId, 'image', TRUE);
+		update_post_meta($postId, 'image', $url, $currentValue);
+	}
+	else
+	{
+		add_post_meta($state, 'is_image_from_gdeslon', TRUE);
 	}
 	@unlink($localFilepath);
-
 }
 function insert_attachment($image, $post_id, $setthumb = FALSE)
 {
