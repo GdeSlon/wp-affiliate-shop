@@ -26,7 +26,7 @@ class GdeSlonWidget extends WP_Widget
 		wp_list_categories(array(
 			'taxonomy'   => 'ps_category',
 			'title_li'   => '',
-			'hide_empty' => 0,
+			'hide_empty' => 1,
 			'depth'      => $depth,
 		));
 		echo '</li></ul>';
