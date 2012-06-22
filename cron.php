@@ -8,8 +8,8 @@ define('DOING_CRON', true);
 require_once(dirname(__FILE__) . '/../../../wp-load.php');
 require_once(dirname(__FILE__) . '/../../../wp-admin/includes/class-pclzip.php');
 
-$accessCode = get_option('ps_access_code');
-$getEnable = (int)get_option('ps_get_enable');
+$accessCode = GS_Config::init()->get('ps_access_code');
+$getEnable = (int)GS_Config::init()->get('ps_get_enable');
 
 if (empty($_GET['code'])) {
 	if (!empty($_SERVER['REQUEST_URI'])) exit;
@@ -215,7 +215,6 @@ fclose($f);
 flushCache($cats);
 
 wp_mail(get_option('admin_email'), 'Обновление товаров', 'Обновление товаров завершено!');
-
 echo "Done!\n";
 exit;
 ?>

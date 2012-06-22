@@ -19,11 +19,11 @@
 			</tr>
 			<tr valign="top">
 				<th scope="row"><label for="ps_download_images">Загружать изображения к себе в WordPress</label></th>
-				<td><input name="ps_download_images" id="ps_download_images" type="checkbox" value="1" <?php if (get_option('ps_download_images')) echo ' checked="checked" '; ?>/></td>
+				<td><input name="ps_download_images" id="ps_download_images" type="checkbox" value="1" <?php if (GS_Config::init()->get('ps_download_images')) echo ' checked="checked" '; ?>/></td>
 			</tr>
 			<tr valign="top">
 				<th scope="row"><label for="ps_row_limit">Кол-во товаров в строке</label></th>
-				<td><input name="ps_row_limit" id="ps_row_limit" type="text" value="<?php echo get_option('ps_row_limit'); ?>" class="regular-text" style="width: 100px;" /></td>
+				<td><input name="ps_row_limit" id="ps_row_limit" type="text" value="<?php echo GS_Config::init()->get('ps_row_limit'); ?>" class="regular-text" style="width: 100px;" /></td>
 			</tr>
 <!--			<tr valign="top">-->
 <!--				<th scope="row"><label for="widget_depth">Глубина вложенности виджета<br/><small>(0 — показывать всё, 1 - только родительские категории)</small></label></th>-->
@@ -31,15 +31,15 @@
 <!--			</tr>-->
 			<tr valign="top">
 				<th scope="row"><label for="ps_get_enable">Обновлять по GET-запросу</label></th>
-				<td><input name="ps_get_enable" id="ps_get_enable" type="checkbox" <?php if($get_enable) echo "checked='yes'"; ?> value="enable" /></td>
+				<td><input name="ps_get_enable" id="ps_get_enable" type="checkbox" <?php echo $get_enable ? "checked='yes'" : ''?> value="enable" /></td>
 			</tr>
 
 			<tr>
 				<td scope="row" colspan="2">
 					<h3>Опции импорта</h3>
-					<?php if (!is_upload_directory_writeable()):?>
+					<?php if (!GdeSlonImport::is_upload_directory_writeable()):?>
 					<p style="color:red;">
-						Внимание! Нет доступа на запись к директории <?php echo get_upload_path()?>.<br/>
+						Внимание! Нет доступа на запись к директории <?php echo GdeSlonImport::get_upload_path()?>.<br/>
 						Вам необходимо дать права на запись в эту директорию. <br/>
 						Если вы не знаете, что это значит — обратитесь за помощью к тех.поддержке вашего хостинга.
 						</p>
@@ -48,15 +48,15 @@
 			</tr>
 			<tr valign="top" style="border-top: 1px solid #aaa;border-left: 1px solid #aaa;border-right: 1px solid #aaa;">
 				<th scope="row"><label for="import_price">Загружать товары дороже чем</label></th>
-				<td><input name="import_price" id="import_price" type="text" value="<?php echo get_option('import_price'); ?>" class="regular-text" style="width: 300px;" /> руб.</td>
+				<td><input name="import_price" id="import_price" type="text" value="<?php echo GS_Config::init()->get('import_price'); ?>" class="regular-text" style="width: 300px;" /> руб.</td>
 			</tr>
 			<tr valign="top" style="border-left: 1px solid #aaa;border-right: 1px solid #aaa;">
 				<th scope="row"><label for="import_title">Загружать только товары, содержащие подстроку в названии</label></th>
-				<td><input name="import_title" id="import_title" type="text" value="<?php echo get_option('import_title'); ?>" class="regular-text" style="width: 300px;" /></td>
+				<td><input name="import_title" id="import_title" type="text" value="<?php echo GS_Config::init()->get('import_title'); ?>" class="regular-text" style="width: 300px;" /></td>
 			</tr>
 			<tr valign="top" style="border-bottom: 1px solid #aaa;border-left: 1px solid #aaa;border-right: 1px solid #aaa;">
 				<th scope="row"><label for="import_vendor">Загружать только товары указанного производителя</label></th>
-				<td><input name="import_vendor" id="import_vendor" type="text" value="<?php echo get_option('import_vendor'); ?>" class="regular-text" style="width: 300px;" /></fieldset></td>
+				<td><input name="import_vendor" id="import_vendor" type="text" value="<?php echo GS_Config::init()->get('import_vendor'); ?>" class="regular-text" style="width: 300px;" /></fieldset></td>
 			</tr>
 
 		</table>
@@ -69,12 +69,12 @@
 	<div style="border: 1px solid #aaa; padding: 7px;">
 		Необходимо в крон добавить один из вариантов запуска модуля импорта:<br /><br />
 		<b>php <?php echo ABSPATH; ?>wp-content/plugins/<?php echo $dirname; ?>/cron.php</b><br /><br />
-		<b>GET <?php bloginfo('url'); ?>/wp-content/plugins/<?php echo $dirname; ?>/cron.php?code=<?php echo get_option('ps_access_code'); ?></b><br />
+		<b>GET <?php bloginfo('url'); ?>/wp-content/plugins/<?php echo $dirname; ?>/cron.php?code=<?php echo GS_Config::init()->get('ps_access_code'); ?></b><br />
 		<br />
 		Либо запустите импорт товаров вручную:<br />
 		<p>Для выкачивания файла будет использован <strong><?php echo GdeSlonImport::checkCurl() ? 'cUrl' : 'file_get_contents'?></strong></p>
 		<form method="get" action="<?php bloginfo('url'); ?>/wp-content/plugins/<?php echo $dirname; ?>/cron.php" target="_blank">
-			<input type="hidden" name="code" value="<?php echo get_option('ps_access_code'); ?>" />
+			<input type="hidden" name="code" value="<?php echo GS_Config::init()->get('ps_access_code'); ?>" />
 			<input type="submit" class="button-primary" value="Запустить импорт" />
 		</form>
 	</div>
@@ -100,12 +100,12 @@
 		</ol>
 	</div>
 
-	<?php if (calcCategories()+calcProducts() > 0):?>
+	<?php if ($categoriesNumber+$productsNumber > 0):?>
 	<h3>Удаление данных</h3>
 	<div style="border: 1px solid #aaa; padding: 7px;">
 		<p>В базе сейчас:</p>
-		<p><b><?php echo calcCategories()?></b> категорий</p>
-		<p><b><?php echo calcProducts()?></b> товаров</p>
+		<p><b><?php echo $categoriesNumber?></b> категорий</p>
+		<p><b><?php echo $productsNumber?></b> товаров</p>
 		<form method="post" action="">
 			<input type="hidden" name="action" value="delete"/>
 			<p style="color:red"><input type="checkbox" name="agree" value="1" id="input-agree"/> <label for="input-agree">Подтверждаю, что хочу удалить выбранные записи из базы данных навсегда без возможности восстановления</label></p>
