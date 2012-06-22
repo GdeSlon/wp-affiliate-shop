@@ -4,7 +4,7 @@ Donate link: http://gdeslon.ru/
 Tags: affiliate marketing, affiliate shop
 Requires at least: 3.0.1
 Tested up to: 3.3.1
-Stable tag: 1.3.3
+Stable tag: 1.4.0
 
 Affiliate shop plugin for Affiliate Network GdeSlon.ru
 
@@ -20,6 +20,11 @@ http://blog.gdeslon.ru/2012/02/wordpress-plagin-dlya-partnerskogo-magazina-2-0/
 http://blog.gdeslon.ru/2011/09/plagin-dlya-sozdaniya-partnyorskogo-internet-magazina/
 
 == Changelog ==
+
+= 1.4.0 =
+* Изменена работы с картинками - иллюстрациями товаров. Они (опционально) выкачиваются на сервер, на котором расположен плагин. Картинки стали обычными WP-картинками, добавлены в медиа-библиотеку.
+* Исправлена ошибка выкачки файлов, связанная с CURLOPT_FOLLOWLOCATION
+* Категории без товаров не показываются в виджете
 
 = 1.3.3 =
 * Исправлена проблема с finfo::file
