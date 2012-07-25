@@ -233,6 +233,10 @@ function showPost($content)
 	global $post;
 	if ($post->post_type != 'ps_catalog')
 		return $content;
+	if (locate_template('archive-ps_catalog.php'))
+	{
+		return;
+	}
 	require 'templates/post.php';
 }
 
