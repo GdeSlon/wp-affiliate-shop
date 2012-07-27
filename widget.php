@@ -22,14 +22,15 @@ class GdeSlonWidget extends WP_Widget
 		$depth = empty($instance['depth']) ? 0 : intval($instance['depth']);
 		echo $before_widget;
 		//содержание функции psCategories
-		echo '<ul><li>', $before_title, ($title ? $title : 'Разделы каталога'), $after_title;
+		echo $before_title, ($title ? $title : 'Разделы каталога'), $after_title;
+		echo '<ul>';
 		wp_list_categories(array(
 			'taxonomy'   => 'ps_category',
 			'title_li'   => '',
 			'hide_empty' => 1,
 			'depth'      => $depth,
 		));
-		echo '</li></ul>';
+		echo '</ul>';
 		echo $after_widget;
 	}
 
