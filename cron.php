@@ -8,6 +8,12 @@ define('DOING_CRON', true);
 require_once(dirname(__FILE__) . '/../../../wp-load.php');
 require_once(dirname(__FILE__) . '/../../../wp-admin/includes/class-pclzip.php');
 
+require_once('config.php');
+require_once('options-controller.php');
+require_once('gs_tools.php');
+require_once('widget.php');
+require_once('posts.php');
+
 $accessCode = GS_Config::init()->get('ps_access_code');
 $getEnable = (int)GS_Config::init()->get('ps_get_enable');
 

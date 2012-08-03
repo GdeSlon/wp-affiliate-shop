@@ -304,7 +304,14 @@ function download_image($url, $postId)
 		$fileContents = curl_exec($ch);
 		curl_close($ch);
 	}
-
+	if (!$fileContents)
+	{
+		echo 'При попытке загрузить файл '.$url.' возникла ошибка: '.
+			"Содержимое файла не получено. Файл был присоединён старым способом\n\r";
+		$currentValue = get_post_meta($postId, 'image', TRUE);
+		update_post_meta($postId, 'image', $url, $currentValue);
+		return;
+	}
 	$localFilepath = dirname(__FILE__).'/downloads/'.basename($url);
 	$f = fopen($localFilepath, 'w');
 	fwrite($f, $fileContents);
@@ -337,7 +344,8 @@ function download_image($url, $postId)
 	{
 		add_post_meta($state, 'is_image_from_gdeslon', TRUE);
 	}
-	@unlink($localFilepath);
+	if (is_file($localFilepath))
+		unlink($localFilepath);
 }
 
 /**
@@ -358,7 +366,7 @@ function insert_attachment($image, $post_id, $setthumb = FALSE)
 		'type' => 'image/jpeg', //yes, thats sloppy, see my text further down on this topic
 		'tmp_name' => $image, //this field passes the actual path to the image
 		'error' => 0, //normally, this is used to store an error, should the upload fail. but since this isnt actually an instance of $_FILES we can default it to zero here
-		'size' => filesize($image) //returns image filesize in bytes
+		//'size' => filesize($image) //returns image filesize in bytes
 	);
 	$imageId = media_handle_sideload($array, $post_id);
 	if ($setthumb)

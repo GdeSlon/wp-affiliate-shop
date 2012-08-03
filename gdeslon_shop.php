@@ -4,13 +4,13 @@ Plugin Name: GdeSlon Affiliate Shop
 Version: 1.4.0
 Author: GdeSlon
 */
-require('config.php');
+require_once('config.php');
 register_activation_hook(__FILE__, array(GS_Config::init(), 'activate'));
 register_deactivation_hook(__FILE__, array(GS_Config::init(), 'deactivate'));
-require('options-controller.php');
-require('gs_tools.php');
-require('widget.php');
-require('posts.php');
+require_once('options-controller.php');
+require_once('gs_tools.php');
+require_once('widget.php');
+require_once('posts.php');
 
 /**
  * Вывод стилей
