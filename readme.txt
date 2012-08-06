@@ -14,6 +14,9 @@ http://blog.gdeslon.ru/2012/02/wordpress-plagin-dlya-partnerskogo-magazina-2-0/
 http://blog.gdeslon.ru/2011/09/plagin-dlya-sozdaniya-partnyorskogo-internet-magazina/
 http://www.gdeslon.ru/affiliate-examples/xml-files
 
+Тема для плагина:
+https://github.com/GdeSlon/gdeslon-affiliate-shop-theme
+
 == Installation == 
 
 http://blog.gdeslon.ru/2012/02/wordpress-plagin-dlya-partnerskogo-magazina-2-0/
