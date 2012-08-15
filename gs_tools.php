@@ -56,7 +56,7 @@ class GdeSlonImport
 			//Если в системе нет ни mimt_content_type ни finfo расширения, то мы никак не можем проверить файл. Пропускаем проверку.
 			return FALSE;
 		}
-		return !(stripos($mimeType, 'zip') !== FALSE);
+		return stripos($mimeType, 'zip') === FALSE && $mimeType != 'application/octet-stream';
 	}
 
 	static public function getFileFromUrl()
@@ -377,5 +377,5 @@ function insert_attachment($image, $post_id, $setthumb = FALSE)
 function get_category_by_outer_id($outerId)
 {
 	global $wpdb;
-	return $wpdb->get_row("SELECT * FROM {$wpdb->terms} WHERE   = {$outerId}");
+	return $wpdb->get_row("SELECT * FROM {$wpdb->terms} WHERE  term_group = {$outerId}");
 }
