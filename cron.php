@@ -91,7 +91,7 @@ global $bufer;
 $bufer = '';
 
 function loadFilePart($f, $delimiter, $path = NULL) {
-	if (!empty($path) && stripos($delimiter, file_get_contents($path)) === FALSE)
+	if (!empty($path) && stripos(file_get_contents($path), $delimiter) === FALSE)
 	{
 		return '';
 	}
@@ -111,10 +111,11 @@ function loadFilePart($f, $delimiter, $path = NULL) {
 	return $res;
 }
 
-$f = fopen($path.'/'.$xmlfile, 'r');
+$xmlFileFullPath = $path.'/'.$xmlfile;
+$f = fopen($xmlFileFullPath, 'r');
 
 /* Обработка категорий */
-$content = loadFilePart($f, '</categories>', $path);
+$content = loadFilePart($f, '</categories>', $xmlFileFullPath);
 $ps = mb_strpos($content, '<categories>', 0, 'utf-8');
 $pe = mb_strpos($content, '</categories>', 0, 'utf-8');
 if ($ps && $pe) {
