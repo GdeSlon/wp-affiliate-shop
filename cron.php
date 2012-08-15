@@ -90,7 +90,11 @@ if (empty($xmlfile)) {
 global $bufer;
 $bufer = '';
 
-function loadFilePart($f, $delimiter) {
+function loadFilePart($f, $delimiter, $path = NULL) {
+	if (!empty($path) && stripos($delimiter, file_get_contents($path)) === FALSE)
+	{
+		return '';
+	}
 	global $bufer;
 	$res = '';
 	while ($row = fgets($f)) {
@@ -110,7 +114,7 @@ function loadFilePart($f, $delimiter) {
 $f = fopen($path.'/'.$xmlfile, 'r');
 
 /* Обработка категорий */
-$content = loadFilePart($f, '</categories>');
+$content = loadFilePart($f, '</categories>', $path);
 $ps = mb_strpos($content, '<categories>', 0, 'utf-8');
 $pe = mb_strpos($content, '</categories>', 0, 'utf-8');
 if ($ps && $pe) {
@@ -152,7 +156,6 @@ if ($ps && $pe) {
 }
 
 /* Обработка товаров */
-$wpdb->query("UPDATE ps_products SET marked = 0 WHERE status <> 2");
 while (true) {
 	$content = loadFilePart($f, '</offer>');
 	$psp = mb_strpos($content, '<offer ', 0, 'utf-8');
@@ -198,7 +201,6 @@ while (true) {
 
 		$title = mysql_real_escape_string($title);
 		$descr = mysql_real_escape_string($descr);
-
 		//обновление поста
 		importPost(array(
 			'id'			=> $id,
@@ -213,7 +215,6 @@ while (true) {
 		unset($content);
 	} else { break; }
 }
-//$wpdb->query("UPDATE ps_products SET status = 0 WHERE marked = 0");
 
 fclose($f);
 @unlink($path.'/'.$xmlfile);
