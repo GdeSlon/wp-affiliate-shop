@@ -15,7 +15,7 @@ http://blog.gdeslon.ru/2011/09/plagin-dlya-sozdaniya-partnyorskogo-internet-maga
 http://www.gdeslon.ru/affiliate-examples/xml-files
 
 Тема для плагина:
-https://github.com/GdeSlon/gdeslon-affiliate-shop-theme
+http://plugins.svn.wordpress.org/gdeslon-affiliate-shop/trunk/themes/GdeSlon-affiliate-shop-theme-begi.zip
 
 == Installation == 
 
