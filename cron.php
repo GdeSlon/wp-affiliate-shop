@@ -200,13 +200,11 @@ while (true) {
 		preg_match('|\<categoryId\>(.+)\</categoryId\>|', $product, $matches);
 		$categoryId = @$matches[1];
 
-		$title = mysql_real_escape_string($title);
-		$descr = mysql_real_escape_string($descr);
 		//обновление поста
 		importPost(array(
 			'id'			=> $id,
 			'title'			=> $title,
-			'description'	=> $descr,
+			'description'	=> nl2br($descr),
 			'url'			=> $url,
 			'price'			=> $price,
 			'currency'		=> $currency,
