@@ -24,6 +24,9 @@ http://blog.gdeslon.ru/2011/09/plagin-dlya-sozdaniya-partnyorskogo-internet-maga
 
 == Changelog ==
 
+= 1.4.5 =
+* Исправлены ошибки в теме 
+
 = 1.4.4 =
 * Исправлены ошибки в теме 
 * Улучшено работа с экранированием пользоватльского контента
