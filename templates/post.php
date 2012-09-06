@@ -35,7 +35,7 @@
 	</tr>
 	<tr>
 		<td>
-			<a href="<?php echo GS_PLUGIN_URL?>go.php?url='.get_post_meta($post->ID, 'url', TRUE); ?>" target="_blank" >
+			<a href="<?php echo GS_PLUGIN_URL?>go.php?url=<?php echo get_post_meta($post->ID, 'url', TRUE); ?>" target="_blank" >
 				<img src="<?php echo GS_PLUGIN_URL?>img/buy.png" alt="Купить <?php echo $post->post_title; ?>" height="25px"/>
 			</a>
 		</td>
