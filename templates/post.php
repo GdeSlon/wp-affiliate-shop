@@ -14,6 +14,7 @@
 		<td style="vertical-align: top;">
 			<div class="products-description">
 				<p><?php echo html_entity_decode(nl2br($content)); ?></p>
+				<?php if (get_post_meta($post->ID, 'vendor', TRUE) || get_post_meta($post->ID, 'params_list', TRUE)):?>
 				<table>
 					<?php if (get_post_meta($post->ID, 'vendor', TRUE)):?>
 					<tr>
@@ -30,6 +31,7 @@
 						<?php endforeach?>
 					<?php endif?>
 				</table>
+				<?php endif?>
 			</div>
 		</td>
 	</tr>
