@@ -4,7 +4,7 @@ Donate link: http://gdeslon.ru/
 Tags: affiliate marketing, affiliate shop
 Requires at least: 3.0.1
 Tested up to: 3.3.1
-Stable tag: 1.4.6
+Stable tag: 1.4.7
 
 Affiliate shop plugin for Affiliate Network GdeSlon.ru
 
@@ -26,6 +26,9 @@ http://blog.gdeslon.ru/2011/09/plagin-dlya-sozdaniya-partnyorskogo-internet-maga
 
 == Changelog ==
 
+
+= 1.4.7 =
+* Возможность задавать количество товаров на главной странице
 
 = 1.4.6 =
 * Исправлены ошибки в построении ссылок
