@@ -22,9 +22,16 @@
 				<td><input name="ps_download_images" id="ps_download_images" type="checkbox" value="1" <?php if (GS_Config::init()->get('ps_download_images')) echo ' checked="checked" '; ?>/></td>
 			</tr>
 			<tr valign="top">
-				<th scope="row"><label for="ps_row_limit">Кол-во товаров в строке</label></th>
+				<th scope="row"><label for="ps_row_limit">Кол-во похожих товаров</label></th>
 				<td><input name="ps_row_limit" id="ps_row_limit" type="text" value="<?php echo GS_Config::init()->get('ps_row_limit'); ?>" class="regular-text" style="width: 100px;" /></td>
 			</tr>
+			<tr valign="top">
+				<th scope="row">
+					Кол-во товаров на главной
+				</th>
+				<td><a href="<?php echo admin_url('options-reading.php') ?>">Перейдите для изменения</a></td>
+			</tr>
+
 <!--			<tr valign="top">-->
 <!--				<th scope="row"><label for="widget_depth">Глубина вложенности виджета<br/><small>(0 — показывать всё, 1 - только родительские категории)</small></label></th>-->
 <!--				<td><input name="widget_depth" id="widget_depth" type="text" value="--><?php //echo get_option('widget_depth'); ?><!--" class="regular-text" style="width: 100px;" /></td>-->
