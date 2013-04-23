@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: GdeSlon Affiliate Shop
-Version: 1.4.7
+Version: 1.4.8
 Author: GdeSlon
 */
 require_once('config.php');
