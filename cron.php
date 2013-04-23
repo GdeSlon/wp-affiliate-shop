@@ -191,6 +191,14 @@ while (true) {
 		$title = str_replace('<![CDATA[', '', $title);
 		$title = str_replace(']]>', '', $title);
 
+		if (!$title && preg_match('|\<model\>(.+)\</model\>|', $product, $matches))
+		{
+			$title = @$matches[1];
+			$title = str_replace('<![CDATA[', '', $title);
+			$title = str_replace(']]>', '', $title);
+		}
+
+
 		$ps = mb_strpos($product, '<description>', 0, 'utf-8');
 		$pe = mb_strpos($product, '</description>', 0, 'utf-8');
 		$descr = mb_substr($product, $ps + mb_strlen('<description>', 'utf-8'), $pe - $ps - mb_strlen('<description>', 'utf-8'), 'utf-8');
