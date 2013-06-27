@@ -77,8 +77,7 @@ class GdeSlonImport
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_HEADER, false);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-		$file = curl_exec($ch);
+		$file = curl_redirect_exec($ch);
 		curl_close($ch);
 		return $file;
 	}
@@ -378,4 +377,38 @@ function get_category_by_outer_id($outerId)
 {
 	global $wpdb;
 	return $wpdb->get_row("SELECT * FROM {$wpdb->terms} WHERE  term_group = {$outerId}");
+}
+
+/*
+	curl_exec which takes in account redirects
+
+	Source http://stackoverflow.com/a/3890902/1194327
+*/
+function curl_redirect_exec($ch, $curlopt_header = false) {
+	curl_setopt($ch, CURLOPT_HEADER, true);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+	$data = curl_exec($ch);
+
+	$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+	if ($http_code == 301 || $http_code == 302) {
+		list($header) = explode("\r\n\r\n", $data, 2);
+
+		$matches = array();
+		preg_match("/(Location:|URI:)[^(\n)]*/", $header, $matches);
+		$url = trim(str_replace($matches[1], "", $matches[0]));
+
+		$url_parsed = parse_url($url);
+		if (isset($url_parsed)) {
+			curl_setopt($ch, CURLOPT_URL, $url);
+			return curl_redirect_exec($ch, $curlopt_header);
+		}
+	}
+
+	if ($curlopt_header) {
+		return $data;
+	} else {
+		list(, $body) = explode("\r\n\r\n", $data, 2);
+		return $body;
+	}
 }
