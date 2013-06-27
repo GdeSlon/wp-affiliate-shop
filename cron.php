@@ -10,6 +10,9 @@ define('DOING_CRON', true);
  */
 define('GS_PLUGIN_PATH', dirname(__FILE__));
 
+// Переписывает include_path на корень
+set_include_path(GS_PLUGIN_PATH . '/../../../');
+
 require_once(GS_PLUGIN_PATH . '/../../../wp-load.php');
 require_once(GS_PLUGIN_PATH . '/../../../wp-admin/includes/class-pclzip.php');
 
