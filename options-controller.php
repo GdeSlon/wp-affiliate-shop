@@ -72,7 +72,7 @@ class GS_Options_Controller
 		$dirname = basename(dirname(__FILE__));
 		$categoriesNumber = $this->calcCategories();
 		$productsNumber = $this->calcProducts();
-		require_once('templates/admin-options.php');
+		require_once(dirname(__FILE__).'/templates/admin-options.php');
 	}
 
 	/**

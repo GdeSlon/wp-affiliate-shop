@@ -4,23 +4,25 @@ Plugin Name: GdeSlon Affiliate Shop
 Version: 1.4.8
 Author: GdeSlon
 */
-require_once('config.php');
-register_activation_hook(__FILE__, array(GS_Config::init(), 'activate'));
-register_deactivation_hook(__FILE__, array(GS_Config::init(), 'deactivate'));
-require_once('options-controller.php');
-require_once('gs_tools.php');
-require_once('widget.php');
-require_once('posts.php');
-
-/**
- * Вывод стилей
- */
-add_action("wp_head", "psStyles", 100);
 
 /**
  * Определение констант
  */
 define('GS_PLUGIN_URL', get_bloginfo('url').'/wp-content/plugins/'.basename(dirname(__FILE__)).'/');
+define('GS_PLUGIN_PATH', dirname(__FILE__));
+
+require_once(GS_PLUGIN_PATH.'/config.php');
+register_activation_hook(__FILE__, array(GS_Config::init(), 'activate'));
+register_deactivation_hook(__FILE__, array(GS_Config::init(), 'deactivate'));
+require_once(GS_PLUGIN_PATH.'/options-controller.php');
+require_once(GS_PLUGIN_PATH.'/gs_tools.php');
+require_once(GS_PLUGIN_PATH.'/widget.php');
+require_once(GS_PLUGIN_PATH.'/posts.php');
+
+/**
+ * Вывод стилей
+ */
+add_action("wp_head", "psStyles", 100);
 
 //*****************************************************************************************************
 

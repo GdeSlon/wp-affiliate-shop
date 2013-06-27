@@ -5,14 +5,19 @@ ignore_user_abort(true);
 set_time_limit(36000);
 define('DOING_CRON', true);
 
-require_once(dirname(__FILE__) . '/../../../wp-load.php');
-require_once(dirname(__FILE__) . '/../../../wp-admin/includes/class-pclzip.php');
+/**
+ * Определение констант
+ */
+define('GS_PLUGIN_PATH', dirname(__FILE__));
 
-require_once('config.php');
-require_once('options-controller.php');
-require_once('gs_tools.php');
-require_once('widget.php');
-require_once('posts.php');
+require_once(GS_PLUGIN_PATH . '/../../../wp-load.php');
+require_once(GS_PLUGIN_PATH . '/../../../wp-admin/includes/class-pclzip.php');
+
+require_once(GS_PLUGIN_PATH.'/config.php');
+require_once(GS_PLUGIN_PATH.'/options-controller.php');
+require_once(GS_PLUGIN_PATH.'/gs_tools.php');
+require_once(GS_PLUGIN_PATH.'/widget.php');
+require_once(GS_PLUGIN_PATH.'/posts.php');
 
 $accessCode = GS_Config::init()->get('ps_access_code');
 $getEnable = (int)GS_Config::init()->get('ps_get_enable');
@@ -24,8 +29,7 @@ if (empty($_GET['code'])) {
 	if ($accessCode != $_GET['code']) exit;
 }
 
-$base = dirname(__FILE__);
-$path = $base.'/downloads';
+$path = GS_PLUGIN_PATH.'/downloads';
 
 
 set_error_handler(
@@ -231,4 +235,3 @@ flushCache($cats);
 wp_mail(get_option('admin_email'), 'Обновление товаров', 'Обновление товаров завершено!');
 echo "Done!\n";
 exit;
-?>

@@ -237,7 +237,7 @@ function showPost($content)
 	{
 		return;
 	}
-	require 'templates/post.php';
+	require dirname(__FILE__).'/templates/post.php';
 }
 
 function getPostByItem($obItem)
