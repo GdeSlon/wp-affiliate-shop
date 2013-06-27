@@ -76,11 +76,11 @@
 	<div style="border: 1px solid #aaa; padding: 7px;">
 		Необходимо в крон добавить один из вариантов запуска модуля импорта:<br /><br />
 		<b>php <?php echo ABSPATH; ?>wp-content/plugins/<?php echo $dirname; ?>/cron.php</b><br /><br />
-		<b>GET <?php bloginfo('url'); ?>/wp-content/plugins/<?php echo $dirname; ?>/cron.php?code=<?php echo GS_Config::init()->get('ps_access_code'); ?></b><br />
+		<b>GET <?php bloginfo('wpurl'); ?>/wp-content/plugins/<?php echo $dirname; ?>/cron.php?code=<?php echo GS_Config::init()->get('ps_access_code'); ?></b><br />
 		<br />
 		Либо запустите импорт товаров вручную:<br />
 		<p>Для выкачивания файла будет использован <strong><?php echo GdeSlonImport::checkCurl() ? 'cUrl' : 'file_get_contents'?></strong></p>
-		<form method="get" action="<?php bloginfo('url'); ?>/wp-content/plugins/<?php echo $dirname; ?>/cron.php" target="_blank">
+		<form method="get" action="<?php bloginfo('wpurl'); ?>/wp-content/plugins/<?php echo $dirname; ?>/cron.php" target="_blank">
 			<input type="hidden" name="code" value="<?php echo GS_Config::init()->get('ps_access_code'); ?>" />
 			<input type="submit" class="button-primary" value="Запустить импорт" />
 		</form>
@@ -102,7 +102,7 @@
 		<ol>
 			<li>Поддержка виджетов в вашей теме</li>
 			<li>Поддержка боковой панели в вашей теме</li>
-			<li>Добавление <a href="<?php bloginfo('url'); ?>/wp-admin/widgets.php">виджета</a> на боковую панель блога.
+			<li>Добавление <a href="<?php bloginfo('wpurl'); ?>/wp-admin/widgets.php">виджета</a> на боковую панель блога.
 				<br>(перейдите по ссылки и перетяните GdeSlon Widget на вашу боковую панель)</li>
 		</ol>
 	</div>
