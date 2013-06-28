@@ -4,7 +4,7 @@ Donate link: http://gdeslon.ru/
 Tags: affiliate marketing, affiliate shop
 Requires at least: 3.0.1
 Tested up to: 3.3.1
-Stable tag: 1.4.8
+Stable tag: 1.4.9
 
 Affiliate shop plugin for Affiliate Network GdeSlon.ru
 
@@ -19,12 +19,17 @@ http://plugins.svn.wordpress.org/gdeslon-affiliate-shop/trunk/themes/GdeSlon-aff
 
 Вопросы и пожелания - info at gdeslon.ru
 
-== Installation == 
+== Installation ==
 
 http://blog.gdeslon.ru/2012/02/wordpress-plagin-dlya-partnerskogo-magazina-2-0/
 http://blog.gdeslon.ru/2011/09/plagin-dlya-sozdaniya-partnyorskogo-internet-magazina/
 
 == Changelog ==
+
+= 1.4.9 =
+* Исправлена ошибка когда сайт установлен в подпапке доменного имени
+* Исправлена совместимость работы крона с другими плагинами
+* Исправление ошибки с CURLOPT_FOLLOWLOCATION на серверах с safe_mode или open_basedir
 
 = 1.4.8 =
 * Добавлена обработка модели в случае когда имя отсутствует
@@ -36,10 +41,10 @@ http://blog.gdeslon.ru/2011/09/plagin-dlya-sozdaniya-partnyorskogo-internet-maga
 * Исправлены ошибки в построении ссылок
 
 = 1.4.5 =
-* Исправлены ошибки в теме 
+* Исправлены ошибки в теме
 
 = 1.4.4 =
-* Исправлены ошибки в теме 
+* Исправлены ошибки в теме
 * Улучшено работа с экранированием пользоватльского контента
 
 = 1.4.3 =
