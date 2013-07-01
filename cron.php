@@ -8,7 +8,9 @@ define('DOING_CRON', true);
 /**
  * Определение констант
  */
-define('GS_PLUGIN_PATH', dirname(__FILE__));
+if (!defined('GS_PLUGIN_PATH')) {
+	define('GS_PLUGIN_PATH', dirname(__FILE__));
+}
 
 // Переписывает include_path на корень
 set_include_path(GS_PLUGIN_PATH . '/../../../');

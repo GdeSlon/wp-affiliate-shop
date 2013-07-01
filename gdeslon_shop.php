@@ -9,7 +9,10 @@ Author: GdeSlon
  * Определение констант
  */
 define('GS_PLUGIN_URL', get_bloginfo('url').'/wp-content/plugins/'.basename(dirname(__FILE__)).'/');
-define('GS_PLUGIN_PATH', dirname(__FILE__));
+if (!defined('GS_PLUGIN_PATH')) {
+	define('GS_PLUGIN_PATH', dirname(__FILE__));
+}
+
 
 require_once(GS_PLUGIN_PATH.'/config.php');
 register_activation_hook(__FILE__, array(GS_Config::init(), 'activate'));
