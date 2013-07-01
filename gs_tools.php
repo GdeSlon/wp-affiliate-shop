@@ -161,7 +161,7 @@ function importTerm(array $category)
 {
 	global $wpdb;
 	$parentId = 0;
-	if ($category['parent_id'])
+	if (!empty($category['parent_id']))
 	{
 		$parentDbItem = get_category_by_outer_id($category['parent_id']);
 		if ($parentDbItem)
@@ -232,7 +232,8 @@ function importPost(array $item, $params = NULL)
 		wp_update_post($params);
 		foreach(array('url', 'price', 'currency', 'bestseller') as $var)
 		{
-			update_post_meta($obItem->ID, $var, $item[$var], get_post_meta($obItem->ID, $var, TRUE));
+			if(!empty($item[$var]))
+				update_post_meta($obItem->ID, $var, $item[$var], get_post_meta($obItem->ID, $var, TRUE));
 		}
 		$postId = $obItem->ID;
 
