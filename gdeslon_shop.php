@@ -43,7 +43,7 @@ function psStyles()
 {
 	echo '<style type="text/css">';
 	echo '.products-list { width: 100%; border-spacing: 10px;} ';
-	echo '.products-list TD { border: 1px solid #aaa; padding: 4px; vertical-align: top; width: '.round(100 / Math.max(1, GS_Config::init()->get('ps_row_limit'))).'%; } ';
+	echo '.products-list TD { border: 1px solid #aaa; padding: 4px; vertical-align: top; width: '.round(100 / max(1, GS_Config::init()->get('ps_row_limit'))).'%; } ';
 	echo '.products-price { font-weight: bold; } ';
 	echo '.products-description { font-size: 0.9em; text-align: left; color: #777; }';
 	echo '.product-table .product-image img { max-width: none; }';

@@ -3,7 +3,7 @@
 function ps_get_taxonomy_parents($term_id, array $terms = array())
 {
 	$obTerm = get_term($term_id, 'ps_category');
-	if ($obTerm->parent)
+	if (!empty($obTerm->parent))
 	{
 		$terms = ps_get_taxonomy_parents($obTerm->parent, $terms);
 	}
@@ -205,7 +205,7 @@ function importPost(array $item, $params = NULL)
 	global $wpdb;
 	$obItem = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE post_mime_type = {$item['id']}");
 	$postId = null;
-	if ($obItem->ID)
+	if (!empty($obItem->ID))
 	{
 		if ($obItem->post_status == 'trash')
 			return;
@@ -251,7 +251,8 @@ function importPost(array $item, $params = NULL)
 		));
 		foreach(array('url', 'price', 'currency', 'bestseller') as $var)
 		{
-			add_post_meta($postId, $var, $item[$var], TRUE);
+			if(!empty($item[$var]))
+				add_post_meta($postId, $var, $item[$var], TRUE);
 		}
 		add_post_meta($postId, '_wp_page_template', 'sidebar-page.php', TRUE);
 	}

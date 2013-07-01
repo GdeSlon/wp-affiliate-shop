@@ -2,9 +2,9 @@
 	<tr>
 		<td style="vertical-align: top;" class="product-image">
 			<?php if (!is_single()):?>
-			<a href="<?php echo get_permalink($relatedItem->ID) ?>" title="<?php echo $relatedItem->post_title; ?>" style="display: block;">
+			<a href="<?php echo get_permalink($post->ID) ?>" title="<?php echo $post->post_title; ?>" style="display: block;">
 			<?php endif?>
-			<?php get_image_from_catalog_item($relatedItem)?>
+			<?php get_image_from_catalog_item($post)?>
 			<?php if (!is_single()):?>
 			</a>
 			<?php endif?>
@@ -76,7 +76,7 @@
 				array(
 					'taxonomy'	=> 'ps_category',
 					'field'		=> 'id',
-					'terms'		=> $terms,
+					'terms'		=> array_values($terms),
 					'operator'	=> 'IN'
 				)
 			);
@@ -94,13 +94,27 @@
 </table>
 
 <?php
-	$products = $wpdb->get_results("SELECT * FROM ps_products WHERE status = 1 AND bestseller = 1 ORDER BY RAND() LIMIT ".GS_Config::init()->get('ps_row_limit'));
-	?>
-<?php if (!empty($products)) { ?>
+	$args = array(
+		'numberposts'	=> GS_Config::init()->get('ps_row_limit'),
+		'orderby'		=> 'rand',
+		'post_type'		=> 'ps_catalog',
+		'post_status' => 'publish',
+		'post__not_in'		=> array($post->ID),
+		'meta_query' => array(
+			array(
+				'key' => 'bestseller',
+				'value' => 1
+			)
+		)
+	);
+
+	$bestsellers = get_posts($args);
+
+	if (!empty($bestsellers)) { ?>
 	<h3>Бестселлеры</h3>
 	<table class="products-list">
 		<tr>
-			<?php foreach ($products as $item) { $relatedItem = getPostByItem($item)?>
+			<?php foreach ($bestsellers as $relatedItem) {?>
 			<td style="text-align: left;">
 				<div class="products-image"><a href="<?php echo get_permalink($relatedItem->ID)?>" title="<?php echo $relatedItem->post_title; ?>"><?php echo get_image_from_catalog_item($relatedItem, 100)?></a></div>
 				<p class="products-name"><?php echo $relatedItem->post_title; ?></p>
