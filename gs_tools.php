@@ -160,38 +160,62 @@ class GdeSlonImport
 function importTerm(array $category)
 {
 	global $wpdb;
+
 	$parentId = 0;
-	if (!empty($category['parent_id']))
-	{
+	if (!empty($category['parent_id'])) {
 		$parentDbItem = get_category_by_outer_id($category['parent_id']);
 		if ($parentDbItem)
 			$parentId = $parentDbItem->term_id;
 	}
-	if (($dbItem = get_category_by_outer_id($category['id']))/* || ($dbItem = $wpdb->get_row("SELECT * FROM {$wpdb->terms} WHERE name = '{$category['title']}'"))*/)
-	{
+
+	// Если категория существует то обновляем её
+	if (($dbItem = get_category_by_outer_id($category['id']))) {
 		$termId = $dbItem->term_id;
-		wp_update_term($dbItem->term_id, 'ps_category', array(
-			'name'			=> $category['title'],
-			'parent'		=> $parentId,
-			'slug'			=> transliteration($category['title'])
-		));
+		$args = array('parent' => $parentId);
+
+		// Старые мета
+		$original_name = get_post_meta($termId, 'original_name', $single = true);
+		$original_slug = get_post_meta($termId, 'original_slug', $single = true);
+
+		// Если оригинальное имя не было изменено
+		// а новое отличается то можем переписать его
+		if($dbItem->name == $original_name && $dbItem->name != $category['title']) {
+			$args['name'] = $category['title'];
+			update_post_meta($termId, 'original_name', $category['title']);
+		}
+
+		// Если оригинальный слаг не был изменен
+		// а новоый отличается то можем переписать его
+		if($dbItem->slug == $original_slug && $dbItem->slug != transliteration($category['title'])) {
+			$args['slug'] = transliteration($category['title']);
+			update_post_meta($termId, 'original_slug', transliteration($category['title']));
+		}
+
+		wp_update_term($dbItem->term_id, 'ps_category', $args);
 	}
-	else
-	{
+	// Если категории существует то создаём её
+	else {
 		$result = wp_insert_term($category['title'], 'ps_category', array(
 			'parent'	=> $parentId,
 			'slug'		=> transliteration($category['title'])
 		));
-		if (is_array($result))
+
+		if (is_array($result)) {
 			$termId = $result['term_id'];
-		elseif (is_object($result) && get_class($result) == 'WP_Error')
-		{
+		}
+		elseif (is_object($result) && get_class($result) == 'WP_Error') {
 			if (!empty($result->error_data['term_exists']))
 				$termId = $result->error_data['term_exists'];
 		}
+
+		// Сохраняем слаги на слудующий раз
+		update_post_meta($termId, 'original_name', $category['title']);
+		update_post_meta($termId, 'original_slug', transliteration($category['title']));
 	}
-	if ($termId)
+
+	if ($termId) {
 		$wpdb->query("UPDATE {$wpdb->terms} SET term_group = {$category['id']} WHERE term_id = $termId");
+	}
 }
 
 /**
