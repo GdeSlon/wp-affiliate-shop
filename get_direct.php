@@ -52,28 +52,7 @@ try{
 }
 
 restore_error_handler();
-if (!GdeSlonImport::checkCurl() && !GdeSlonImport::checkFileGetContentsCurl())
-{
-	die("Не найдено расширение php cUrl, а получение удаленного файла запрещено в настройках php.ini");
-}
-@unlink($path.'/archive.zip');
-$f = fopen($path.'/archive.zip', 'w');
-fwrite($f, GdeSlonImport::getFileFromUrl());
-fclose($f);
-if (GdeSlonImport::checkMimeType($path.'/archive.zip'))
-{
-	die("По указанному пути не найден ZIP-файл. Проверьте правильность введённой ссылки");
-}
 
-/* Удаление старых xml-файлов */
-$dh = opendir($path);
-while ($file = readdir($dh)) {
-	if (strpos($file, '.xml') !== false) {
-		@unlink($path.'/'.$file);
-		break;
-	}
-}
-closedir($dh);
 
 /* Распаковка архива */
 $zip = new PclZip($path.'/archive.zip');
