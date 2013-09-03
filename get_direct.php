@@ -110,12 +110,16 @@ foreach($info->shop->offers->offer as $key => $value)
 	unset($value->attributes()->gs_category_id);
 	$i++;
 }
+
 // save the updated document
 $info->asXML('direct.xml');
+copy('direct.xml', 'downloads/direct.xml');
 
 $file = ("direct.xml");
 header ("Content-Type: application/octet-stream");
 header ("Accept-Ranges: bytes");
 header ("Content-Length: ".filesize($file));
 header ("Content-Disposition: attachment; filename=".$file);
-readfile($file);
+readfile("downloads/direct.xml");
+
+unlink('direct.xml');
