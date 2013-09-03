@@ -85,6 +85,7 @@
 			<input type="submit" class="button-primary" value="Запустить импорт" />
 		</form>
 		<br />
+		<p>Дождитесь, чтобы импорт товаров закончился, иначе Ваша выгрузка будет неполной.</p>
 		<form method="get" action="<?php bloginfo('wpurl'); ?>/wp-content/plugins/<?php echo $dirname; ?>/get_direct.php" target="_blank">
 			<input type="hidden" name="code" value="<?php echo GS_Config::init()->get('ps_access_code'); ?>" />
 			<input type="hidden" name="direct" value="true" />
