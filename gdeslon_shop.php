@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: GdeSlon Affiliate Shop
-Version: 1.4.11
+Version: 1.5
 Author: GdeSlon
 */
 
