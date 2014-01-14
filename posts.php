@@ -55,7 +55,11 @@ function registerGdeSlonPostType()
 		{
 			return $where;
 		}
-		return str_replace("post_type IN ('post',", "post_type IN ('post','ps_catalog',", $where);
+
+		if(preg_match("/post_type = \'post\'/", $where))
+			return str_replace("post_type = 'post'", "post_type IN ('post','ps_catalog')", $where);
+		else
+			return str_replace("post_type IN ('post',", "post_type IN ('post','ps_catalog',", $where);
 	}
 	add_filter('posts_where', 'filter_where', 9999);
 }
