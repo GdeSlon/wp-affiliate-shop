@@ -267,3 +267,23 @@ function get_image_from_catalog_item($post, $width = 250)
 	$url = $url ? $url : GS_PLUGIN_URL.'img/noimage.jpg';
 	echo '<img src="'.$url.'" title="Купить '.$post->post_title.'" alt="Купить '.$post->post_title.'" style="width: '.$width .'px;" />';
 }
+
+/**
+ * Переадресовываем со страницы товара на ссылку из базы данных
+ */
+add_action('template_redirect', 'redirect_to_url');
+function redirect_to_url()
+{
+	if (!empty($_REQUEST['do_product_action']) && !empty($GLOBALS['post']) && $GLOBALS['post']->post_type == 'ps_catalog' && ($url = get_post_meta($GLOBALS['post']->ID, 'url', TRUE)))
+	{
+		if(preg_match('#(http?)://\S+[^\s.,>)\];\'\"!?]#i', $url))
+		{
+			header('Content-type: text/html; charset=utf-8');
+			echo "Перенаправление";
+			sleep(2);
+			echo "<html><head><meta http-equiv=\"refresh\" content=\"0;url=$url\"></head></html>";
+			exit();
+		}
+	}
+	return;
+}
