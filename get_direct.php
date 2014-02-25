@@ -1,6 +1,7 @@
 <?php
 header('Content-type: text/html; charset=utf-8');
 define('PARSING_IS_RUNNING', TRUE);
+
 ignore_user_abort(true);
 set_time_limit(36000);
 define('DOING_CRON', true);
@@ -14,33 +15,31 @@ if (!defined('GS_PLUGIN_PATH')) {
 
 // Переписывает include_path на корень
 set_include_path(GS_PLUGIN_PATH . '/../../../');
-
-require_once(GS_PLUGIN_PATH . '/../../../wp-load.php');
-require_once(GS_PLUGIN_PATH . '/../../../wp-admin/includes/class-pclzip.php');
-
 require_once(GS_PLUGIN_PATH.'/config.php');
 require_once(GS_PLUGIN_PATH.'/options-controller.php');
 require_once(GS_PLUGIN_PATH.'/gs_tools.php');
 require_once(GS_PLUGIN_PATH.'/widget.php');
 require_once(GS_PLUGIN_PATH.'/posts.php');
 
+
 function get_post_by_title($page_title, $output = OBJECT) {
     global $wpdb;
         $post = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_title = %s", $page_title ));
         if ( $post )
             return get_post($post, $output);
-
     return null;
 }
 
 $accessCode = GS_Config::init()->get('ps_access_code');
-$getEnable = (int)GS_Config::init()->get('ps_get_enable');
 
-if (empty($_GET['code'])) {
+$getEnable = (int)GS_Config::init()->get('ps_get_enable');
+//var_dump($_POST);die;
+if (empty($_POST['code'])) {
+
 	if (!empty($_SERVER['REQUEST_URI'])) exit("Неверный код безопасности.");
 } else {
 	if(!$getEnable) die('Возможность обновления базы GET-запросом выключена');
-	if ($accessCode != $_GET['code']) exit;
+	if ($accessCode != $_POST['code']) exit;
 }
 
 $path = GS_PLUGIN_PATH.'/downloads';
@@ -55,6 +54,7 @@ restore_error_handler();
 
 
 /* Распаковка архива */
+//var_dump($path.'/archive.zip');die;
 $zip = new PclZip($path.'/archive.zip');
 if ($status = $zip->extract(PCLZIP_OPT_PATH, $path) === 0)
 {
@@ -112,14 +112,11 @@ foreach($info->shop->offers->offer as $key => $value)
 }
 
 // save the updated document
-$info->asXML('direct.xml');
-copy('direct.xml', 'downloads/direct.xml');
+$info->asXML(GS_PLUGIN_PATH.'/direct.xml');
+copy(GS_PLUGIN_PATH.'/direct.xml', GS_PLUGIN_PATH.'/downloads/direct.xml');
 
-$file = ("direct.xml");
-header ("Content-Type: application/octet-stream");
-header ("Accept-Ranges: bytes");
-header ("Content-Length: ".filesize($file));
-header ("Content-Disposition: attachment; filename=".$file);
-readfile("downloads/direct.xml");
+$plugins_url = plugins_url();
+$cur_path = plugin_basename(__FILE__);
+$plugin_name = str_replace('get_direct.php','',$cur_path);
+echo $plugins_url.'/'.$plugin_name.'direct.xml';
 
-unlink('direct.xml');

@@ -12,12 +12,9 @@ if (!defined('GS_PLUGIN_PATH')) {
 	define('GS_PLUGIN_PATH', dirname(__FILE__));
 }
 
-// Переписывает include_path на корень
+
 set_include_path(GS_PLUGIN_PATH . '/../../../');
-
-require_once(GS_PLUGIN_PATH . '/../../../wp-load.php');
-require_once(GS_PLUGIN_PATH . '/../../../wp-admin/includes/class-pclzip.php');
-
+// Переписывает include_path на корень
 require_once(GS_PLUGIN_PATH.'/config.php');
 require_once(GS_PLUGIN_PATH.'/options-controller.php');
 require_once(GS_PLUGIN_PATH.'/gs_tools.php');
@@ -27,13 +24,13 @@ require_once(GS_PLUGIN_PATH.'/posts.php');
 $accessCode = GS_Config::init()->get('ps_access_code');
 $getEnable = (int)GS_Config::init()->get('ps_get_enable');
 
-if (empty($_GET['code'])) {
+if (empty($_POST['code'])) {
 	if (!empty($_SERVER['REQUEST_URI'])) exit;
 } else {
 	if(!$getEnable) die('Возможность обновления базы GET-запросом выключена');
-	if ($accessCode != $_GET['code']) exit;
+	if ($accessCode != $_POST['code']) exit;
 }
-
+//die("ASda");
 $path = GS_PLUGIN_PATH.'/downloads';
 
 

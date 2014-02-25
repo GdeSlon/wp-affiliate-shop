@@ -50,3 +50,16 @@ function psStyles()
 	echo '.product-table tr, .product-table td{ border:0; }';
 	echo '</style>';
 }
+
+add_action( 'wp_ajax_get_direct', 'get_direct' );
+add_action( 'wp_ajax_nopriv_get_direct', 'get_direct' );
+function get_direct()
+{
+	require_once(GS_PLUGIN_PATH . '/../../../wp-load.php');
+	require_once(GS_PLUGIN_PATH . '/../../../wp-admin/includes/class-pclzip.php');
+	if($_POST['form']=="get_direct"):
+		require_once(GS_PLUGIN_PATH.'/get_direct.php');
+	else:
+		require_once(GS_PLUGIN_PATH.'/cron.php');
+	endif;
+}
