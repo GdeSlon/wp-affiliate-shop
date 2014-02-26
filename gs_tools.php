@@ -155,6 +155,10 @@ class GdeSlonImport
 	 */
 	static function check_access()
 	{
+		if (PHP_SAPI === 'cli')
+		{
+			return;
+		}
 		$accessCode = GS_Config::init()->get('ps_access_code');
 		$getEnable = (int)GS_Config::init()->get('ps_get_enable');
 
