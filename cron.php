@@ -12,25 +12,8 @@ if (!defined('GS_PLUGIN_PATH')) {
 	define('GS_PLUGIN_PATH', dirname(__FILE__));
 }
 
+GdeSlonImport::check_access();
 
-set_include_path(GS_PLUGIN_PATH . '/../../../');
-// Переписывает include_path на корень
-require_once(GS_PLUGIN_PATH.'/config.php');
-require_once(GS_PLUGIN_PATH.'/options-controller.php');
-require_once(GS_PLUGIN_PATH.'/gs_tools.php');
-require_once(GS_PLUGIN_PATH.'/widget.php');
-require_once(GS_PLUGIN_PATH.'/posts.php');
-
-$accessCode = GS_Config::init()->get('ps_access_code');
-$getEnable = (int)GS_Config::init()->get('ps_get_enable');
-
-if (empty($_POST['code'])) {
-	if (!empty($_SERVER['REQUEST_URI'])) exit;
-} else {
-	if(!$getEnable) die('Возможность обновления базы GET-запросом выключена');
-	if ($accessCode != $_POST['code']) exit;
-}
-//die("ASda");
 $path = GS_PLUGIN_PATH.'/downloads';
 
 
@@ -72,10 +55,11 @@ while ($file = readdir($dh)) {
 closedir($dh);
 
 /* Распаковка архива */
-$zip = new PclZip($path.'/archive.zip');
-if ($status = $zip->extract(PCLZIP_OPT_PATH, $path) === 0)
+WP_Filesystem();
+if ($status = unzip_file($path.'/archive.zip', $path) !== TRUE)
 {
-	die('Ошибка при распаковке архива. Данные об ошибке PclZip — Code: '.$zip->error_code.'; Message: '.$zip->error_string);
+	die('Ошибка при распаковке архива. Данные об ошибке
+	PclZip — Code: '.$status->get_error_code().'; Message: '.$status->get_error_message($status->get_error_code()));
 }
 
 $xmlfile = '';
@@ -116,6 +100,8 @@ function loadFilePart($f, $delimiter, $path = NULL) {
 	$bufer = @$newBufer;
 	return $res;
 }
+
+echo '123';
 
 $xmlFileFullPath = $path.'/'.$xmlfile;
 $f = fopen($xmlFileFullPath, 'r');

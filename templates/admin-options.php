@@ -76,19 +76,18 @@
 	<div style="border: 1px solid #aaa; padding: 7px;">
 		Необходимо в крон добавить один из вариантов запуска модуля импорта:<br /><br />
 		<b>php <?php echo ABSPATH; ?>wp-content/plugins/<?php echo $dirname; ?>/cron.php</b><br /><br />
-		<b>GET <?php bloginfo('wpurl'); ?>/wp-content/plugins/<?php echo $dirname; ?>/cron.php?code=<?php echo GS_Config::init()->get('ps_access_code'); ?></b><br />
+		<b>GET <?php echo admin_url( 'admin-ajax.php' )?>?action=parse_url&code=<?php echo GS_Config::init()->get('ps_access_code'); ?></b><br />
 		<br />
 		Либо запустите импорт товаров вручную:<br />
 		<p>Для выкачивания файла будет использован <strong><?php echo GdeSlonImport::checkCurl() ? 'cUrl' : 'file_get_contents'?></strong></p>
-		<form method="get" action="<?php bloginfo('wpurl'); ?>/wp-content/plugins/<?php echo $dirname; ?>/cron.php" target="_blank">
+		<form method="post" action="<?php echo admin_url( 'admin-ajax.php' )?>?action=parse_url" target="_blank">
 			<input type="hidden" name="code" value="<?php echo GS_Config::init()->get('ps_access_code'); ?>" />
 			<input type="submit" class="button-primary archive" value="Запустить импорт" />
 		</form>
 		<br />
 		<p>Дождитесь, чтобы импорт товаров закончился, иначе Ваша выгрузка будет неполной.</p>
-		<form method="get" action="<?php bloginfo('wpurl'); ?>/wp-content/plugins/<?php echo $dirname; ?>/get_direct.php" target="_blank">
+		<form method="post" action="<?php echo admin_url( 'admin-ajax.php' )?>?action=get_direct" target="_blank">
 			<input type="hidden" class="code" name="code" value="<?php echo GS_Config::init()->get('ps_access_code'); ?>" />
-			<input type="hidden" name="direct" value="true" />
 			<input type="submit" class="button-primary yandex" value="Скачать выгрузку для ЯндексДиректа" />
 		</form>
 	</div>

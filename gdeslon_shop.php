@@ -51,15 +51,24 @@ function psStyles()
 	echo '</style>';
 }
 
+/**
+ * Скачивание yandex-direct
+ */
 add_action( 'wp_ajax_get_direct', 'get_direct' );
 add_action( 'wp_ajax_nopriv_get_direct', 'get_direct' );
 function get_direct()
 {
-	require_once(GS_PLUGIN_PATH . '/../../../wp-load.php');
-	require_once(GS_PLUGIN_PATH . '/../../../wp-admin/includes/class-pclzip.php');
-	if($_POST['form']=="get_direct"):
-		require_once(GS_PLUGIN_PATH.'/get_direct.php');
-	else:
-		require_once(GS_PLUGIN_PATH.'/cron.php');
-	endif;
+	require_once(GS_PLUGIN_PATH.'/get_direct.php');
+	die;
+}
+
+/**
+ * Выкачка данных из выгрузки
+ */
+add_action( 'wp_ajax_parse_url', 'ajax_parse_url' );
+add_action( 'wp_ajax_nopriv_parse_url', 'ajax_parse_url' );
+function ajax_parse_url()
+{
+	require_once(GS_PLUGIN_PATH.'/cron.php');
+	die;
 }

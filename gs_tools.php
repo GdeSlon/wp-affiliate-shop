@@ -148,6 +148,39 @@ class GdeSlonImport
 	{
 		return is_writable(self::get_upload_path());
 	}
+
+	/**
+	 * @static
+	 * Проверка разрешения на доступ к файлам cron.php и get-direct.php
+	 */
+	static function check_access()
+	{
+		$accessCode = GS_Config::init()->get('ps_access_code');
+		$getEnable = (int)GS_Config::init()->get('ps_get_enable');
+
+		$getCode = empty($_GET['code']) ? NULL : $_GET['code'];
+		$postCode = empty($_POST['code']) ? NULL : $_POST['code'];
+
+		if (!$postCode)
+		{
+			if (!$getCode)
+			{
+				die('Не найден код');
+			}
+			elseif (!$getEnable)
+			{
+				die('Возможность обновления базы GET-запросом выключена');
+			}
+			elseif ($getCode != $accessCode)
+			{
+				die('Проверьте правильность кода');
+			}
+		}
+		elseif ($postCode != $accessCode)
+		{
+			die('Проверьте правильность кода');
+		}
+	}
 }
 
 
