@@ -25,7 +25,7 @@ class GdeSlonWidget extends WP_Widget
 		echo $before_title, ($title ? $title : 'Разделы каталога'), $after_title;
 		echo '<ul>';
 		wp_list_categories(array(
-			'taxonomy'   => 'ps_category',
+			'taxonomy'   => 'product_cat',
 			'title_li'   => '',
 			'hide_empty' => 1,
 			'depth'      => $depth,

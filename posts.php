@@ -1,7 +1,7 @@
 <?php
 /**
  * Регистрация кастомного поста
- */
+
 add_action('init', 'registerGdeSlonPostType');
 function registerGdeSlonPostType()
 {
@@ -63,7 +63,7 @@ function registerGdeSlonPostType()
 	}
 	add_filter('posts_where', 'filter_where', 9999);
 }
-
+ */
 /**
  * Помечаем товар, как отредактированный вручную
  */
@@ -82,7 +82,7 @@ function markAsEdited($post)
  */
 function flushCache()
 {
-	delete_option("ps_category_children");
+	delete_option("product_cat_children");
 }
 
 /**
@@ -248,11 +248,7 @@ function getPostByItem($obItem)
 {
 	return get_post($obItem->post_id);
 }
-function getItemByPost($obPost)
-{
-	global $wpdb;
-	return $wpdb->get_row("SELECT * FROM ps_products WHERE post_id = '{$obPost->ID}'");
-}
+
 
 /**
  * Вывод изображения
@@ -274,7 +270,7 @@ function get_image_from_catalog_item($post, $width = 250)
 add_action('template_redirect', 'redirect_to_url');
 function redirect_to_url()
 {
-	if (!empty($_REQUEST['do_product_action']) && !empty($GLOBALS['post']) && $GLOBALS['post']->post_type == 'ps_catalog' && ($url = get_post_meta($GLOBALS['post']->ID, 'url', TRUE)))
+	if (!empty($_REQUEST['do_product_action']) && !empty($GLOBALS['post']) && $GLOBALS['post']->post_type == 'product' && ($url = get_post_meta($GLOBALS['post']->ID, 'url', TRUE)))
 	{
 		if(preg_match('#(http?)://\S+[^\s.,>)\];\'\"!?]#i', $url))
 		{

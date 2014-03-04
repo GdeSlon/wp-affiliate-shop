@@ -72,7 +72,9 @@ class GS_Options_Controller
 		$dirname = basename(dirname(__FILE__));
 		$categoriesNumber = $this->calcCategories();
 		$productsNumber = $this->calcProducts();
+
 		require_once(dirname(__FILE__).'/templates/admin-options.php');
+
 	}
 
 	/**
@@ -81,7 +83,7 @@ class GS_Options_Controller
 	 */
 	public function calcCategories()
 	{
-		return $this->_wpdb->get_var("SELECT COUNT(*) FROM `{$this->_wpdb->term_taxonomy}` WHERE `taxonomy` = 'ps_category'");
+		return $this->_wpdb->get_var("SELECT COUNT(*) FROM `{$this->_wpdb->term_taxonomy}` WHERE `taxonomy` = 'product_cat'");
 	}
 
 	/**
@@ -90,17 +92,17 @@ class GS_Options_Controller
 	 */
 	public function calcProducts()
 	{
-		return $this->_wpdb->get_var("SELECT COUNT(*) FROM `{$this->_wpdb->posts}` WHERE `post_type` = 'ps_catalog'");
+		return $this->_wpdb->get_var("SELECT COUNT(*) FROM `{$this->_wpdb->posts}` WHERE `post_type` = 'product'");
 	}
 
 	public function deleteCategories()
 	{
-		return $this->_wpdb->get_var("DELETE a,b,c FROM {$this->_wpdb->term_taxonomy} a LEFT JOIN {$this->_wpdb->term_relationships} b ON (a.term_taxonomy_id = b.term_taxonomy_id) LEFT JOIN {$this->_wpdb->terms} c ON (a.term_id = c.term_id) WHERE a.taxonomy = 'ps_category';");
+		return $this->_wpdb->get_var("DELETE a,b,c FROM {$this->_wpdb->term_taxonomy} a LEFT JOIN {$this->_wpdb->term_relationships} b ON (a.term_taxonomy_id = b.term_taxonomy_id) LEFT JOIN {$this->_wpdb->terms} c ON (a.term_id = c.term_id) WHERE a.taxonomy = 'product_cat';");
 	}
 
 	public function deleteProducts()
 	{
-		return $this->_wpdb->query("DELETE a,b,c FROM {$this->_wpdb->posts} a LEFT JOIN {$this->_wpdb->term_relationships} b ON (a.ID = b.object_id) LEFT JOIN {$this->_wpdb->postmeta} c ON (a.ID = c.post_id) WHERE a.post_type = 'ps_catalog'");
+		return $this->_wpdb->query("DELETE a,b,c FROM {$this->_wpdb->posts} a LEFT JOIN {$this->_wpdb->term_relationships} b ON (a.ID = b.object_id) LEFT JOIN {$this->_wpdb->postmeta} c ON (a.ID = c.post_id) WHERE a.post_type = 'product'");
 	}
 
 	/**

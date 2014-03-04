@@ -58,11 +58,11 @@
 <table class="products-list">
 	<tr>
 		<?php
-		$termsList = wp_get_post_terms($post->ID, 'ps_category');
+		$termsList = wp_get_post_terms($post->ID, 'product_cat');
 		$args = array(
 			'numberposts'	=> GS_Config::init()->get('ps_row_limit'),
 			'orderby'		=> 'rand',
-			'post_type'		=> 'ps_catalog',
+			'post_type'		=> 'product',
 			'post__not_in'		=> array($post->ID)
 		);
 		$terms = array();
@@ -74,7 +74,7 @@
 		{
 			$args['tax_query'] = array(
 				array(
-					'taxonomy'	=> 'ps_category',
+					'taxonomy'	=> 'product_cat',
 					'field'		=> 'id',
 					'terms'		=> array_values($terms),
 					'operator'	=> 'IN'
@@ -97,7 +97,7 @@
 	$args = array(
 		'numberposts'	=> GS_Config::init()->get('ps_row_limit'),
 		'orderby'		=> 'rand',
-		'post_type'		=> 'ps_catalog',
+		'post_type'		=> 'product',
 		'post_status' => 'publish',
 		'post__not_in'		=> array($post->ID),
 		'meta_query' => array(

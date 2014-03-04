@@ -2,7 +2,7 @@
 //Рекурсивное получение родительских категорий
 function ps_get_taxonomy_parents($term_id, array $terms = array())
 {
-	$obTerm = get_term($term_id, 'ps_category');
+	$obTerm = get_term($term_id, 'product_cat');
 	if (!empty($obTerm->parent))
 	{
 		$terms = ps_get_taxonomy_parents($obTerm->parent, $terms);
@@ -209,7 +209,6 @@ function importTerm(array $category)
 	if (($dbItem = get_category_by_outer_id($category['id']))) {
 		$termId = $dbItem->term_id;
 		$args = array('parent' => $parentId);
-
 		// Старые мета
 		$original_name = get_post_meta($termId, 'original_name', $single = true);
 		$original_slug = get_post_meta($termId, 'original_slug', $single = true);
@@ -228,11 +227,11 @@ function importTerm(array $category)
 			update_post_meta($termId, 'original_slug', transliteration($category['title']));
 		}
 
-		wp_update_term($dbItem->term_id, 'ps_category', $args);
+		wp_update_term($dbItem->term_id, 'product_cat', $args);
 	}
 	// Если категории существует то создаём её
 	else {
-		$result = wp_insert_term($category['title'], 'ps_category', array(
+		$result = wp_insert_term($category['title'], 'product_cat', array(
 			'parent'	=> $parentId,
 			'slug'		=> transliteration($category['title'])
 		));
@@ -253,6 +252,7 @@ function importTerm(array $category)
 	if ($termId) {
 		$wpdb->query("UPDATE {$wpdb->terms} SET term_group = {$category['id']} WHERE term_id = $termId");
 	}
+//	var_dump($parentId, $termId); die;
 }
 
 /**
@@ -263,6 +263,15 @@ function importTerm(array $category)
  */
 function importPost(array $item, $params = NULL)
 {
+	/*
+	 * If connected woocommerce plugin - add posts to post type of woocommerce
+	 */
+	include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+	if(!is_plugin_active('woocommerce/woocommerce.php')){
+		echo "Для корректной работы этого плагина, необходимо установить Woocommerce плагин.";
+		die;
+	}
+	$product_params = $params;
 	global $wpdb;
 	$obItem = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE post_mime_type = {$item['id']}");
 	$postId = null;
@@ -279,7 +288,7 @@ function importPost(array $item, $params = NULL)
 			'ID'				=> $obItem->ID,
 			'post_title'		=> $item['title'],
 			'post_content'		=> $item['description'],
-			'post_type'			=> 'ps_catalog',
+			'post_type'			=> 'product',
 			//'post_status'		=> 'publish',
 			'post_mime_type'	=> $item['id'],
 			'post_name'			=> transliteration($item['title'])
@@ -291,11 +300,20 @@ function importPost(array $item, $params = NULL)
 			unset($params['post_name']);
 		}
 		wp_update_post($params);
-		foreach(array('url', 'price', 'currency', 'bestseller') as $var)
-		{
-			if(!empty($item[$var]))
-				update_post_meta($obItem->ID, $var, $item[$var], get_post_meta($obItem->ID, $var, TRUE));
+
+		//set gdeslon url
+		if($item['url'])
+			update_post_meta($obItem->ID, 'url', $item['url'], get_post_meta($obItem->ID, 'url', TRUE));
+
+		//set gdeslon price
+		if($item['price']){
+			update_post_meta($obItem->ID, '_regular_price', $item['price'], get_post_meta($obItem->ID, '_regular_price', TRUE));
+			update_post_meta($obItem->ID, '_price', $item['price'], get_post_meta($obItem->ID, '_price', TRUE));
+			update_post_meta($obItem->ID, '_visibility', 'visible', get_post_meta($obItem->ID, '_visibility', TRUE));
+			update_post_meta($obItem->ID, '_stock_status', 'instock', get_post_meta($obItem->ID, '_stock_status', TRUE));
 		}
+
+
 		$postId = $obItem->ID;
 
 	}
@@ -304,17 +322,25 @@ function importPost(array $item, $params = NULL)
 		$postId = wp_insert_post(array(
 			'post_title'		=> $item['title'],
 			'post_content'		=> $item['description'],
-			'post_type'			=> 'ps_catalog',
+			'post_type'			=> 'product',
 			'post_status'		=> 'publish',
 			'post_mime_type'	=> $item['id'],
 			'comment_status'	=> 'closed',
 			'post_name'			=> transliteration($item['title'])
 		));
-		foreach(array('url', 'price', 'currency', 'bestseller') as $var)
-		{
-			if(!empty($item[$var]))
-				add_post_meta($postId, $var, $item[$var], TRUE);
+
+		//set gdeslon url
+		if($item['url'])
+			add_post_meta($postId, 'url', $item['url'], TRUE);
+
+		//set gdeslon price
+		if($item['price']){
+			add_post_meta($postId, '_regular_price', $item['price'], TRUE);
+			add_post_meta($postId, '_price', $item['price'], TRUE);
+			add_post_meta($postId, '_visibility', 'visible', TRUE);
+			add_post_meta($postId, '_stock_status', 'instock', TRUE);
 		}
+
 		add_post_meta($postId, '_wp_page_template', 'sidebar-page.php', TRUE);
 	}
 	/**
@@ -324,11 +350,34 @@ function importPost(array $item, $params = NULL)
 	{
 		download_image($item['image'], $postId);
 	}
-	wp_set_object_terms($postId, array(intval(get_category_by_outer_id($item['category_id'])->term_id)), 'ps_category');
-	foreach($params as $name => $value)
+	wp_set_object_terms($postId, array(intval(get_category_by_outer_id($item['category_id'])->term_id)), 'product_cat');
+
+	//add product params
+	$attributes = array();
+	unset($product_params['params_list']);
+	unset($product_params['vendor']);
+	foreach($product_params as $name => $value)
 	{
-		update_post_meta($postId, $name, $value);
+		$attributes[htmlspecialchars(stripslashes($name))] = array(
+				//Make sure the 'name' is same as you have the attribute
+				'name'         => htmlspecialchars(stripslashes($name)),
+				'value'        => $value,
+				'position'     => 1,
+				'is_visible'   => 1,
+				'is_variation' => 1,
+				'is_taxonomy'  => 0
+			);
 	}
+
+	set_product_attributes($postId, $attributes);
+}
+
+function set_product_attributes($post_id, $attributes)
+{
+
+	//Add as post meta
+	add_post_meta($post_id, '_product_attributes', serialize($attributes));
+
 }
 
 /**

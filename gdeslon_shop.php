@@ -35,8 +35,8 @@ function psAdminPage()
 {
 	add_menu_page('GdeSlon Shop', 'GdeSlon Shop', 'edit_pages', 'wp-affiliate-shop', array(GS_Options_Controller::init(), 'render'));
 	add_submenu_page(__FILE__, 'Настройки', 'Настройки', 'edit_pages', 'wp-affiliate-shop', array(GS_Options_Controller::init(), 'render'));
-	add_submenu_page('wp-affiliate-shop', 'Каталог', 'Каталог', 'edit_pages', 'edit.php?post_type=ps_catalog');
-	add_submenu_page('wp-affiliate-shop', 'Категории', 'Категории', 'edit_pages', 'edit-tags.php?taxonomy=ps_category');
+//	add_submenu_page('wp-affiliate-shop', 'Каталог', 'Каталог', 'edit_pages', 'edit.php?post_type=ps_catalog');
+//	add_submenu_page('wp-affiliate-shop', 'Категории', 'Категории', 'edit_pages', 'edit-tags.php?taxonomy=ps_category');
 }
 
 function psStyles()
@@ -72,3 +72,53 @@ function ajax_parse_url()
 	require_once(GS_PLUGIN_PATH.'/cron.php');
 	die;
 }
+
+
+add_filter('woocommerce_loop_add_to_cart_link', 'change_link', 1, 2);
+function change_link(){
+	global $post;
+
+	?>
+	<a href="<?php echo add_query_arg('do_product_action', 'redirect', get_permalink($post))?>" target="_blank" >
+		<img src="<?php echo GS_PLUGIN_URL?>img/buy.png" alt="Купить <?php echo $post->post_title; ?>" height="25px"/>
+	</a>
+<?php
+
+}
+
+
+include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+if(is_plugin_active('woocommerce/woocommerce.php')){
+
+	add_action( 'pre_get_posts', 'custom_pre_get_posts_query' );
+
+	function custom_pre_get_posts_query( $q ) {
+
+
+		if ( ! $q->is_main_query() ) return;
+		if ( ! $q->is_post_type_archive() ) return;
+
+		if ( ! is_admin() && is_shop() ) {
+
+			$q->set( 'post_type', array('product', 'ps_catalog') );
+		}
+
+		remove_action( 'pre_get_posts', 'custom_pre_get_posts_query' );
+
+	}
+
+//	remove_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart', 10 );
+
+	remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart', 30 );
+
+	remove_action( 'woocommerce_simple_add_to_cart', 'woocommerce_simple_add_to_cart', 30 );
+
+	remove_action( 'woocommerce_grouped_add_to_cart', 'woocommerce_grouped_add_to_cart', 30 );
+
+	$cart_id = woocommerce_get_page_id('cart');
+
+	if($cart_id){
+		wp_delete_post($cart_id);
+	}
+}
+
