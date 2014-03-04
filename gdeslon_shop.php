@@ -13,7 +13,22 @@ if (!defined('GS_PLUGIN_PATH')) {
 	define('GS_PLUGIN_PATH', dirname(__FILE__));
 }
 
-
+include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+if(!is_plugin_active('woocommerce/woocommerce.php')){
+	function my_admin_notice() {
+		?>
+		<div class="error">
+			<p><?php _e('Плагин GdeSlon Affiliate Shop зависит от плагина Woocommerce! Пожалуйста установите плагин woocommerce!', 'error-woocommerce-require'); ?></p>
+		</div>
+	<?php
+	}
+	add_action( 'admin_notices', 'my_admin_notice' );
+	function deactivate_plugin_conditional() {
+		deactivate_plugins('wp-affiliate-shop/gdeslon_shop.php');
+		remove_menu_page('wp-affiliate-shop');
+	}
+	add_action( 'admin_init', 'deactivate_plugin_conditional' );
+}
 require_once(GS_PLUGIN_PATH.'/config.php');
 register_activation_hook(__FILE__, array(GS_Config::init(), 'activate'));
 register_deactivation_hook(__FILE__, array(GS_Config::init(), 'deactivate'));

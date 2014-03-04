@@ -1,6 +1,3 @@
-<?php if(!is_plugin_active('woocommerce/woocommerce.php')): ?>
-<div class="error"><p>Внимание - Для корректной работы этого плагина, необходимо установить Woocommerce плагин.</p></div>
-<?php endif; ?>
 <?php if ($isUpdated):?>
 <div class="updated"><p><strong>Настройки сохранены</strong></p></div>
 <?php endif?>
