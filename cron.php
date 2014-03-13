@@ -101,8 +101,6 @@ function loadFilePart($f, $delimiter, $path = NULL) {
 	return $res;
 }
 
-echo '123';
-
 $xmlFileFullPath = $path.'/'.$xmlfile;
 $f = fopen($xmlFileFullPath, 'r');
 
