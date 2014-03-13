@@ -115,49 +115,6 @@ function transliteration($str)
 	return $str;
 }
 
-//@todo В чистом виде работает некорректно из-за специфики темы. Надо думать, что можно сделать.
-add_filter('single_template', 'filter_single_template');
-add_filter('body_class', 'filter_single_body_class',9999);
-
-/**
- * Переопределение css-класса <body> single.php
- * @param $template
- * @return string
- */
-function filter_single_body_class($class)
-{
-	$classKeys = array_flip($class);
-	unset($classKeys['singular']);
-	return array_flip($classKeys);
-}
-
-/**
- * Переопределение single.php
- * @param $template
- * @return string
- */
-function filter_single_template( $template )
-{
-	global $wp_query;
-
-	if (get_post_type($wp_query->post) != 'ps_catalog')
-		return $template;
-
-	// No template? Nothing we can do.
-	$template_file = get_post_meta($wp_query->post->ID, '_wp_page_template', true);
-	if ( ! $template_file )
-		return $template;
-
-	// If there's a tpl in a (child theme or theme with no child)
-	if ( file_exists( get_stylesheet_directory() .'/'. $template_file ) )
-		return get_stylesheet_directory() .'/'. $template_file;
-	// If there's a tpl in the parent of the current child theme
-	/*	else if ( file_exists( TEMPLATEPATH . DIRECTORY_SEPARATOR . $template_file ) )
-			return TEMPLATEPATH . DIRECTORY_SEPARATOR . $template_file;*/
-	return $template;
-}
-
-
 add_filter('the_content', 'showPost', 999999);
 add_filter('loop_start', 'showBreadCrumbs', 999999);
 
