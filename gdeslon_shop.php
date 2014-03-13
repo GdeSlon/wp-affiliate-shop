@@ -95,7 +95,7 @@ function change_link(){
 
 	?>
 	<a href="<?php echo add_query_arg('do_product_action', 'redirect', get_permalink($post))?>" target="_blank" >
-		<img src="<?php echo GS_PLUGIN_URL?>img/buy.png" alt="Купить <?php echo $post->post_title; ?>" height="25px"/>
+		<img src="<?php echo GS_PLUGIN_URL?>img/buy.png" alt="Купить <?php echo $post->post_title; ?>" height="25px" style="width:124px"/>
 	</a>
 <?php
 
