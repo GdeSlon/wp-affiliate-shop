@@ -74,8 +74,7 @@
 	<h3>Импорт</h3>
 	<?php if (GdeSlonImport::checkCurl() || GdeSlonImport::checkFileGetContentsCurl()):?>
 	<div style="border: 1px solid #aaa; padding: 7px;">
-		Необходимо в крон добавить один из вариантов запуска модуля импорта:<br /><br />
-		<b>php <?php echo ABSPATH; ?>wp-content/plugins/<?php echo $dirname; ?>/cron.php</b><br /><br />
+		Необходимо в крон добавить запуск модуля импорта:<br /><br />
 		<b>GET <?php echo admin_url( 'admin-ajax.php' )?>?action=parse_url&code=<?php echo GS_Config::init()->get('ps_access_code'); ?></b><br />
 		<br />
 		Либо запустите импорт товаров вручную:<br />
