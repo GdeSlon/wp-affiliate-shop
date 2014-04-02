@@ -88,54 +88,6 @@ function ajax_parse_url()
 	die;
 }
 
-include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-if(is_plugin_active('woocommerce/woocommerce.php')){
-
-	add_action( 'pre_get_posts', 'custom_pre_get_posts_query' );
-
-	function custom_pre_get_posts_query( $q ) {
-
-
-		if ( ! $q->is_main_query() ) return;
-		if ( ! $q->is_post_type_archive() ) return;
-
-		if ( ! is_admin() && is_shop() ) {
-
-			$q->set( 'post_type', array('product', 'ps_catalog') );
-		}
-
-		remove_action( 'pre_get_posts', 'custom_pre_get_posts_query' );
-
-	}
-	add_action('init', 'gdeslon_init');
-	function gdeslon_init()
-	{
-		remove_all_filters('woocommerce_cart_link');
-		remove_all_filters('woo_nav_after');
-		remove_all_filters( 'woocommerce_simple_add_to_cart');
-
-
-		remove_action( 'woocommerce_grouped_add_to_cart', 'woocommerce_grouped_add_to_cart', 30 );
-
-		$cart_id = woocommerce_get_page_id('cart');
-
-		if($cart_id){
-			wp_delete_post($cart_id);
-		}
-		add_action( 'woocommerce_simple_add_to_cart', 'change_link', 1, 2);
-		add_filter('woocommerce_loop_add_to_cart_link', 'change_link', 1, 2);
-		function change_link()
-		{
-			global $post, $product;
-			echo '<a href="'.add_query_arg('do_product_action', 'redirect', get_permalink($post)).'" class="button add_to_cart_button product_type_simple" target="_blank" >'.esc_html( $product->add_to_cart_text()).'</a>';
-		}
-
-
-	}
-
-//	remove_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart', 10 );
-
-//	remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart', 30 );
-
-}
+require_once 'woocommerce.php';
+GdeSlon_Woocommerce::init();
 
