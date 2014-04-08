@@ -45,8 +45,6 @@ class GdeSlon_Woocommerce
 			wp_delete_post($cart_id);
 		}
 
-		add_action('pre_get_posts', array($this, 'hook_pre_get_posts'));
-
 		/**
 		 * Меняем работу ссылки добавления в корзину. Теперь она переадресовывает на партнёрку.
 		 */
@@ -79,18 +77,6 @@ class GdeSlon_Woocommerce
 		return $imgHtml;
 	}
 
-	public function hook_pre_get_posts($q)
-	{
-		if (! $q->is_main_query()) return;
-		if (! $q->is_post_type_archive()) return;
-
-		if (! is_admin() && is_shop())
-		{
-			$q->set('post_type', array('product', 'ps_catalog'));
-		}
-
-		remove_action('pre_get_posts', array($this, 'hook_pre_get_posts'));
-	}
 
 	public function hook_change_link()
 	{
