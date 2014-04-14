@@ -17,6 +17,10 @@ http://www.gdeslon.ru/affiliate-examples/xml-files
 Тема для плагина:
 http://plugins.svn.wordpress.org/gdeslon-affiliate-shop/trunk/themes/GdeSlon-affiliate-shop-theme-begi.zip
 
+ВНИМАНИЕ! С версии 2.0 плагин требует установки плагина Woocommerce
+(http://wordpress.org/plugins/woocommerce/) и использует темы для
+Woocommerce.
+
 Вопросы и пожелания - info at gdeslon.ru
 
 == Installation ==
@@ -24,7 +28,14 @@ http://plugins.svn.wordpress.org/gdeslon-affiliate-shop/trunk/themes/GdeSlon-aff
 http://blog.gdeslon.ru/2012/02/wordpress-plagin-dlya-partnerskogo-magazina-2-0/
 http://blog.gdeslon.ru/2011/09/plagin-dlya-sozdaniya-partnyorskogo-internet-magazina/
 
+ВНИМАНИЕ! С версии 2.0 плагин требует установки плагина Woocommerce
+(http://wordpress.org/plugins/woocommerce/) и использует темы для
+Woocommerce.
+
 == Changelog ==
+
+= 2.0 =
+* Плагин интегрирован в Woocommerce. Внимание - с этой версии плагин требует установки плагина Woocommerce (http://wordpress.org/plugins/woocommerce/). Вы можете воспользоваться всеми возможностями Woocommerce - темами, фильтрами, навигацией.
 
 = 1.5.5 =
 * Исправлено несколько потенциальных уязвимостей
