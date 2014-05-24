@@ -1,4 +1,19 @@
 <?php
+//проверка на существование опции в настройках постоянных ссылок
+function gs_perma_check(){
+	$opt=get_option('woocommerce_permalinks');
+	if (empty($opt["category_base"])){
+	?>
+	<script type="text/javascript">
+		$j = jQuery;
+		$j().ready(function(){
+			$j('.wrap > h2').parent().prev().after('<div class="update-nag">Чтобы избежать ошибок <a href="<?=admin_url()?>options-permalink.php">измените</a> значение опции "Постоянная ссылка рубрик" на непустое.</div>');
+		});
+	</script>
+	<?php
+	}
+}
+add_action('admin_head','gs_perma_check');
 //Рекурсивное получение родительских категорий
 function ps_get_taxonomy_parents($term_id, array $terms = array())
 {
@@ -273,7 +288,14 @@ function importPost(array $item, $params = NULL)
 	}
 	$product_params = $params;
 	global $wpdb;
-	$obItem = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE post_mime_type = {$item['id']}");
+	$rd_args = array(
+		'post_type' => 'product',
+		'meta_key' => 'offer_id',
+		'meta_value' => $item['id']
+	);
+	$q = new WP_Query( $rd_args );
+	$obItem=@$q->posts[0];
+	//$obItem = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE ID = {$item['id']}");
 	$postId = null;
 	if (!empty($obItem->ID))
 	{
@@ -290,7 +312,6 @@ function importPost(array $item, $params = NULL)
 			'post_content'		=> $item['description'],
 			'post_type'			=> 'product',
 			//'post_status'		=> 'publish',
-			'post_mime_type'	=> $item['id'],
 			'post_name'			=> transliteration($item['title'])
 		);
 		if (get_post_meta($obItem->ID, 'edited_by_user', TRUE))
@@ -301,6 +322,9 @@ function importPost(array $item, $params = NULL)
 		}
 		wp_update_post($params);
 
+		//set gdeslon offer_id
+		update_post_meta($obItem->ID, 'offer_id', $item['id']);
+			
 		//set gdeslon url
 		if($item['url'])
 			update_post_meta($obItem->ID, 'url', $item['url'], get_post_meta($obItem->ID, 'url', TRUE));
@@ -329,6 +353,9 @@ function importPost(array $item, $params = NULL)
 			'post_name'			=> transliteration($item['title'])
 		));
 
+		//set gdeslon offer_id
+			add_post_meta($postId, 'offer_id', $item['id']);
+		
 		//set gdeslon url
 		if($item['url'])
 			add_post_meta($postId, 'url', $item['url'], TRUE);

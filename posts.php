@@ -126,7 +126,7 @@ add_filter('loop_start', 'showBreadCrumbs', 999999);
 function showBreadCrumbs($content)
 {
 	global $post;
-	if (($post->post_type != 'ps_catalog' || !is_single()) && !is_tax('ps_category') && !is_post_type_archive('ps_catalog'))
+	if ((@$post->post_type != 'ps_catalog' || !is_single()) && !is_tax('ps_category') && !is_post_type_archive('ps_catalog'))
 		return;
 
 	$delimiter = '&raquo;'; // разделить между ссылками
@@ -192,7 +192,7 @@ function showPost($content)
 {
 	global $wpdb;
 	global $post;
-	if ($post->post_type != 'ps_catalog')
+	if ($post->post_type != 'product')
 		return $content;
 	if (locate_template('archive-ps_catalog.php'))
 	{

@@ -154,16 +154,14 @@ while (true) {
 
 	if ($psp !== false && $pep !== false)
 	{
-		$product = mb_substr($content, $psp + mb_strlen('<offer ', 'utf-8'), $pep - $psp - mb_strlen('<offer ', 'utf-8'), 'utf-8');
-
+		$product = mb_substr($content, $psp + mb_strlen('<offer', 'utf-8'), $pep - $psp - mb_strlen('<offer ', 'utf-8'), 'utf-8');
 		$matches = array();
 
 		if (!GdeSlonImport::filterImport($product))
 			continue;
 
-		preg_match('/ id="(\d+)"/', $product, $matches);
+		preg_match('/ id="(.+?)"/', $product, $matches);
 		$id = @$matches[1];
-
 		preg_match('|\<url\>(.+)\</url\>|', $product, $matches);
 		$url = @$matches[1];
 
