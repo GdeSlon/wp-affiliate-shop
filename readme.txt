@@ -4,7 +4,7 @@ Donate link: http://gdeslon.ru/
 Tags: affiliate marketing, affiliate shop
 Requires at least: 3.0.1
 Tested up to: 3.3.1
-Stable tag: 1.5.5
+Stable tag: 2.1
 
 Affiliate shop plugin for Affiliate Network GdeSlon.ru
 
@@ -33,6 +33,10 @@ http://blog.gdeslon.ru/2011/09/plagin-dlya-sozdaniya-partnyorskogo-internet-maga
 Woocommerce.
 
 == Changelog ==
+
+= 2.1 =
+* Исправлено дублирование товаров при импорте
+* Исправлен баг с количеством похожих товаров
 
 = 2.0 =
 * Плагин интегрирован в Woocommerce. Внимание - с этой версии плагин требует установки плагина Woocommerce (http://wordpress.org/plugins/woocommerce/). Вы можете воспользоваться всеми возможностями Woocommerce - темами, фильтрами, навигацией.
