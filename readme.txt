@@ -10,18 +10,21 @@ Affiliate shop plugin for Affiliate Network GdeSlon.ru
 
 == Description ==
 
+
+## Инструкции
 http://blog.gdeslon.ru/2012/02/wordpress-plagin-dlya-partnerskogo-magazina-2-0/
 http://blog.gdeslon.ru/2011/09/plagin-dlya-sozdaniya-partnyorskogo-internet-magazina/
 http://www.gdeslon.ru/affiliate-examples/xml-files
 
-Тема для плагина:
+## Тема для плагина:
 http://plugins.svn.wordpress.org/gdeslon-affiliate-shop/trunk/themes/GdeSlon-affiliate-shop-theme-begi.zip
 
-ВНИМАНИЕ! С версии 2.0 плагин требует установки плагина Woocommerce
+## ВНИМАНИЕ! С версии 2.0 плагин требует установки плагина Woocommerce
 (http://wordpress.org/plugins/woocommerce/) и использует темы для
 Woocommerce.
 
-Вопросы и пожелания - info at gdeslon.ru
+## Вопросы и пожелания
+Направляйте на официальный форум поддержки https://github.com/GdeSlon/wp-affiliate-shop/issues?labels=development&state=open
 
 == Installation ==
 
