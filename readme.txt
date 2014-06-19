@@ -24,7 +24,8 @@ http://plugins.svn.wordpress.org/gdeslon-affiliate-shop/trunk/themes/GdeSlon-aff
 Woocommerce.
 
 ## Вопросы и пожелания
-Направляйте на официальный форум поддержки https://github.com/GdeSlon/wp-affiliate-shop/issues?labels=development&state=open
+Направляйте на официальный форум поддержки
+https://github.com/GdeSlon/wp-affiliate-shop/issues
 
 == Installation ==
 
