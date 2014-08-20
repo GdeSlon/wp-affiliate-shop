@@ -27,6 +27,11 @@ Woocommerce.
 Направляйте на официальный форум поддержки
 https://github.com/GdeSlon/wp-affiliate-shop/issues
 
+Плагин развивается преимущественно силами сообщества.
+Это означает что его изменения вы можете сделать сами, или заказать у специалистов:
+1. Найти фрилансеров https://www.fl.ru/
+2. Обратиться в студию, которая знает как этот плагин устроен http://casepress.org/ и уже имеет опыт изменений.
+
 == Installation ==
 
 http://blog.gdeslon.ru/2012/02/wordpress-plagin-dlya-partnerskogo-magazina-2-0/
